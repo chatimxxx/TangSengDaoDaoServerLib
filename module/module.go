@@ -13,22 +13,22 @@ import (
 	migrate "github.com/rubenv/sql-migrate"
 )
 
-func Setup(ctx *config.Context) error {
-
+func Setup(ctx *config.Context, initSql bool) error {
 	// 获取所有模块
 	ms := register.GetModules(ctx)
-
 	// 初始化SQL
-	var sqlfss []*register.SQLFS
-	for _, m := range ms {
-		if m.SQLDir != nil {
-			sqlfss = append(sqlfss, m.SQLDir)
-		}
+	if initSql {
+		var sqlFSs []*register.SQLFS
+		for _, m := range ms {
+			if m.SQLDir != nil {
+				sqlFSs = append(sqlFSs, m.SQLDir)
+			}
 
-	}
-	err := executeSQL(sqlfss, ctx.DB())
-	if err != nil {
-		return err
+		}
+		err := executeSQL(sqlFSs, ctx.DB())
+		if err != nil {
+			return err
+		}
 	}
 	// 注册api
 	for _, m := range ms {

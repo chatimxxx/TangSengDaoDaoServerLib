@@ -251,7 +251,6 @@ func (l *WKHttp) handlersToGinHandleFuncs(handlers []HandlerFunc) []gin.HandlerF
 
 // AuthMiddleware 认证中间件
 func (l *WKHttp) AuthMiddleware(cache cache.Cache, tokenPrefix string) HandlerFunc {
-
 	return func(c *Context) {
 		token := c.GetHeader("token")
 		if token == "" {

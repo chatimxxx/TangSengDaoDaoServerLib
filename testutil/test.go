@@ -26,7 +26,7 @@ func NewTestServer(args ...string) (*server.Server, *config.Context) {
 	cfg.Test = true
 	// cfg.TracingOn = true
 	// cfg.TracerAddr = "49.235.106.135:6831"
-	cfg.DB.MySQLAddr = "root:123456@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=true"
+	cfg.DB.MySQLAddr = "root:12345678@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=true"
 	cfg.DB.Migration = false
 	ctx := config.NewContext(cfg)
 	// ctx.Event = event.New(ctx)
