@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 
-	llog "github.com/TangSengDaoDao/TangSengDaoDaoServerLib/pkg/log"
+	llog "github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/log"
 	"github.com/gin-gonic/gin"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
