@@ -6,7 +6,6 @@ import (
 	"sync"
 )
 
-
 type Queue struct {
 	sync.Mutex
 	popable *sync.Cond
@@ -39,7 +38,7 @@ func (e *Queue) Close() {
 	}
 }
 
-//Pop 取出队列,（阻塞模式）
+// Pop 取出队列,（阻塞模式）
 func (e *Queue) Pop() (v interface{}) {
 	c := e.popable
 	buffer := e.buffer
@@ -62,7 +61,7 @@ func (e *Queue) Pop() (v interface{}) {
 	return
 }
 
-//试着取出队列（非阻塞模式）返回ok == false 表示空
+// 试着取出队列（非阻塞模式）返回ok == false 表示空
 func (e *Queue) TryPop() (v interface{}, ok bool) {
 	buffer := e.buffer
 
@@ -85,7 +84,7 @@ func (e *Queue) Len() int {
 	return e.buffer.Length()
 }
 
-//Wait 等待队列消费完成
+// Wait 等待队列消费完成
 func (e *Queue) Wait() {
 	for {
 		if e.closed || e.buffer.Length() == 0 {

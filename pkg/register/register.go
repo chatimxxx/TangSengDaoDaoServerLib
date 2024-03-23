@@ -129,7 +129,6 @@ var once sync.Once
 var moduleList []Module
 
 func GetModules(ctx any) []Module {
-
 	once.Do(func() {
 		for _, m := range modules {
 			moduleList = append(moduleList, m(ctx))

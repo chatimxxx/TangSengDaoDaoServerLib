@@ -75,11 +75,9 @@ func (c *Context) GetConfig() *Config {
 
 // NewMySQL 创建mysql数据库实例
 func (c *Context) NewMySQL() *dbr.Session {
-
 	if c.mySQLSession == nil {
 		c.mySQLSession = db.NewMySQL(c.cfg.DB.MySQLAddr, c.cfg.DB.MySQLMaxOpenConns, c.cfg.DB.MySQLMaxIdleConns, c.cfg.DB.MySQLConnMaxLifetime)
 	}
-
 	return c.mySQLSession
 }
 

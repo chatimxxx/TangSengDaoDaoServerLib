@@ -78,7 +78,7 @@ func GetRandomSalt() string {
 	return GetRandomString(8)
 }
 
-//GetRandomString 生成随机字符串
+// GetRandomString 生成随机字符串
 func GetRandomString(num int) string {
 	str := "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	bytes := []byte(str)

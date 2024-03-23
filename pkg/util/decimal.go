@@ -2,16 +2,16 @@
 //
 // To use as part of a struct:
 //
-//     type Struct struct {
-//         Number Decimal
-//     }
+//	type Struct struct {
+//	    Number Decimal
+//	}
 //
 // The zero-value of a Decimal is 0, as you would expect.
 //
 // The best way to create a new Decimal is to use decimal.NewFromString, ex:
 //
-//     n, err := decimal.NewFromString("-123.4567")
-//     n.String() // output: "-123.4567"
+//	n, err := decimal.NewFromString("-123.4567")
+//	n.String() // output: "-123.4567"
 //
 // NOTE: This can "only" represent numbers with a maximum of 2^31 digits
 // after the decimal point.
@@ -32,16 +32,15 @@ import (
 //
 // Example:
 //
-//     d1 := decimal.NewFromFloat(2).Div(decimal.NewFromFloat(3)
-//     d1.String() // output: "0.6666666666666667"
-//     d2 := decimal.NewFromFloat(2).Div(decimal.NewFromFloat(30000)
-//     d2.String() // output: "0.0000666666666667"
-//     d3 := decimal.NewFromFloat(20000).Div(decimal.NewFromFloat(3)
-//     d3.String() // output: "6666.6666666666666667"
-//     decimal.DivisionPrecision = 3
-//     d4 := decimal.NewFromFloat(2).Div(decimal.NewFromFloat(3)
-//     d4.String() // output: "0.667"
-//
+//	d1 := decimal.NewFromFloat(2).Div(decimal.NewFromFloat(3)
+//	d1.String() // output: "0.6666666666666667"
+//	d2 := decimal.NewFromFloat(2).Div(decimal.NewFromFloat(30000)
+//	d2.String() // output: "0.0000666666666667"
+//	d3 := decimal.NewFromFloat(20000).Div(decimal.NewFromFloat(3)
+//	d3.String() // output: "6666.6666666666666667"
+//	decimal.DivisionPrecision = 3
+//	d4 := decimal.NewFromFloat(2).Div(decimal.NewFromFloat(3)
+//	d4.String() // output: "0.667"
 var DivisionPrecision = 16
 
 // MarshalJSONWithoutQuotes should be set to true if you want the decimal to
@@ -99,9 +98,8 @@ func NewFromBigInt(value *big.Int, exp int32) Decimal {
 //
 // Example:
 //
-//     d, err := NewFromString("-123.45")
-//     d2, err := NewFromString(".0001")
-//
+//	d, err := NewFromString("-123.45")
+//	d2, err := NewFromString(".0001")
 func NewFromString(value string) (Decimal, error) {
 	originalInput := value
 	var intString string
@@ -158,9 +156,8 @@ func NewFromString(value string) (Decimal, error) {
 //
 // Example:
 //
-//     d := RequireFromString("-123.45")
-//     d2 := RequireFromString(".0001")
-//
+//	d := RequireFromString("-123.45")
+//	d2 := RequireFromString(".0001")
 func RequireFromString(value string) Decimal {
 	dec, err := NewFromString(value)
 	if err != nil {
@@ -173,8 +170,8 @@ func RequireFromString(value string) Decimal {
 //
 // Example:
 //
-//     NewFromFloat(123.45678901234567).String() // output: "123.4567890123456"
-//     NewFromFloat(.00000000000000001).String() // output: "0.00000000000000001"
+//	NewFromFloat(123.45678901234567).String() // output: "123.4567890123456"
+//	NewFromFloat(.00000000000000001).String() // output: "0.00000000000000001"
 //
 // NOTE: some float64 numbers can take up about 300 bytes of memory in decimal representation.
 // Consider using NewFromFloatWithExponent if space is more important than precision.
@@ -189,8 +186,7 @@ func NewFromFloat(value float64) Decimal {
 //
 // Example:
 //
-//     NewFromFloatWithExponent(123.456, -2).String() // output: "123.46"
-//
+//	NewFromFloatWithExponent(123.456, -2).String() // output: "123.46"
 func NewFromFloatWithExponent(value float64, exp int32) Decimal {
 	if math.IsNaN(value) || math.IsInf(value, 0) {
 		panic(fmt.Sprintf("Cannot create a Decimal from %v", value))
@@ -279,7 +275,7 @@ func NewFromFloatWithExponent(value float64, exp int32) Decimal {
 //
 // Example:
 //
-// 	d := New(12345, -4)
+//	d := New(12345, -4)
 //	d2 := d.rescale(-1)
 //	d3 := d2.rescale(-4)
 //	println(d1)
@@ -291,7 +287,6 @@ func NewFromFloatWithExponent(value float64, exp int32) Decimal {
 //	1.2345
 //	1.2
 //	1.2000
-//
 func (d Decimal) rescale(exp int32) Decimal {
 	d.ensureInitialized()
 	// NOTE(vadim): must convert exps to float64 before - to prevent overflow
@@ -396,9 +391,11 @@ func (d Decimal) Div(d2 Decimal) Decimal {
 
 // QuoRem does divsion with remainder
 // d.QuoRem(d2,precision) returns quotient q and remainder r such that
-//   d = d2 * q + r, q an integer multiple of 10^(-precision)
-//   0 <= r < abs(d2) * 10 ^(-precision) if d>=0
-//   0 >= r > -abs(d2) * 10 ^(-precision) if d<0
+//
+//	d = d2 * q + r, q an integer multiple of 10^(-precision)
+//	0 <= r < abs(d2) * 10 ^(-precision) if d>=0
+//	0 >= r > -abs(d2) * 10 ^(-precision) if d<0
+//
 // Note that precision<0 is allowed as input.
 func (d Decimal) QuoRem(d2 Decimal, precision int32) (Decimal, Decimal) {
 	d.ensureInitialized()
@@ -441,8 +438,10 @@ func (d Decimal) QuoRem(d2 Decimal, precision int32) (Decimal, Decimal) {
 
 // DivRound divides and rounds to a given precision
 // i.e. to an integer multiple of 10^(-precision)
-//   for a positive quotient digit 5 is rounded up, away from 0
-//   if the quotient is negative then digit 5 is rounded down, away from 0
+//
+//	for a positive quotient digit 5 is rounded up, away from 0
+//	if the quotient is negative then digit 5 is rounded down, away from 0
+//
 // Note that precision<0 is allowed as input.
 func (d Decimal) DivRound(d2 Decimal, precision int32) Decimal {
 	// QuoRem already checks initialization
@@ -492,10 +491,9 @@ func (d Decimal) Pow(d2 Decimal) Decimal {
 
 // Cmp compares the numbers represented by d and d2 and returns:
 //
-//     -1 if d <  d2
-//      0 if d == d2
-//     +1 if d >  d2
-//
+//	-1 if d <  d2
+//	 0 if d == d2
+//	+1 if d >  d2
 func (d Decimal) Cmp(d2 Decimal) int {
 	d.ensureInitialized()
 	d2.ensureInitialized()
@@ -548,7 +546,6 @@ func (d Decimal) LessThanOrEqual(d2 Decimal) bool {
 //	-1 if d <  0
 //	 0 if d == 0
 //	+1 if d >  0
-//
 func (d Decimal) Sign() int {
 	if d.value == nil {
 		return 0
@@ -600,13 +597,12 @@ func (d Decimal) Float64() (f float64, exact bool) {
 //
 // Example:
 //
-//     d := New(-12345, -3)
-//     println(d.String())
+//	d := New(-12345, -3)
+//	println(d.String())
 //
 // Output:
 //
-//     -12.345
-//
+//	-12.345
 func (d Decimal) String() string {
 	return d.string(true)
 }
@@ -616,14 +612,13 @@ func (d Decimal) String() string {
 //
 // Example:
 //
-// 	   NewFromFloat(0).StringFixed(2) // output: "0.00"
-// 	   NewFromFloat(0).StringFixed(0) // output: "0"
-// 	   NewFromFloat(5.45).StringFixed(0) // output: "5"
-// 	   NewFromFloat(5.45).StringFixed(1) // output: "5.5"
-// 	   NewFromFloat(5.45).StringFixed(2) // output: "5.45"
-// 	   NewFromFloat(5.45).StringFixed(3) // output: "5.450"
-// 	   NewFromFloat(545).StringFixed(-1) // output: "550"
-//
+//	NewFromFloat(0).StringFixed(2) // output: "0.00"
+//	NewFromFloat(0).StringFixed(0) // output: "0"
+//	NewFromFloat(5.45).StringFixed(0) // output: "5"
+//	NewFromFloat(5.45).StringFixed(1) // output: "5.5"
+//	NewFromFloat(5.45).StringFixed(2) // output: "5.45"
+//	NewFromFloat(5.45).StringFixed(3) // output: "5.450"
+//	NewFromFloat(545).StringFixed(-1) // output: "550"
 func (d Decimal) StringFixed(places int32) string {
 	rounded := d.Round(places)
 	return rounded.string(false)
@@ -634,14 +629,13 @@ func (d Decimal) StringFixed(places int32) string {
 //
 // Example:
 //
-// 	   NewFromFloat(0).StringFixed(2) // output: "0.00"
-// 	   NewFromFloat(0).StringFixed(0) // output: "0"
-// 	   NewFromFloat(5.45).StringFixed(0) // output: "5"
-// 	   NewFromFloat(5.45).StringFixed(1) // output: "5.4"
-// 	   NewFromFloat(5.45).StringFixed(2) // output: "5.45"
-// 	   NewFromFloat(5.45).StringFixed(3) // output: "5.450"
-// 	   NewFromFloat(545).StringFixed(-1) // output: "550"
-//
+//	NewFromFloat(0).StringFixed(2) // output: "0.00"
+//	NewFromFloat(0).StringFixed(0) // output: "0"
+//	NewFromFloat(5.45).StringFixed(0) // output: "5"
+//	NewFromFloat(5.45).StringFixed(1) // output: "5.4"
+//	NewFromFloat(5.45).StringFixed(2) // output: "5.45"
+//	NewFromFloat(5.45).StringFixed(3) // output: "5.450"
+//	NewFromFloat(545).StringFixed(-1) // output: "550"
 func (d Decimal) StringFixedBank(places int32) string {
 	rounded := d.RoundBank(places)
 	return rounded.string(false)
@@ -659,9 +653,8 @@ func (d Decimal) StringFixedCash(interval uint8) string {
 //
 // Example:
 //
-// 	   NewFromFloat(5.45).Round(1).String() // output: "5.5"
-// 	   NewFromFloat(545).Round(-1).String() // output: "550"
-//
+//	NewFromFloat(5.45).Round(1).String() // output: "5.5"
+//	NewFromFloat(545).Round(-1).String() // output: "550"
 func (d Decimal) Round(places int32) Decimal {
 	// truncate to places + 1
 	ret := d.rescale(-places - 1)
@@ -691,13 +684,12 @@ func (d Decimal) Round(places int32) Decimal {
 //
 // Examples:
 //
-// 	   NewFromFloat(5.45).Round(1).String() // output: "5.4"
-// 	   NewFromFloat(545).Round(-1).String() // output: "540"
-// 	   NewFromFloat(5.46).Round(1).String() // output: "5.5"
-// 	   NewFromFloat(546).Round(-1).String() // output: "550"
-// 	   NewFromFloat(5.55).Round(1).String() // output: "5.6"
-// 	   NewFromFloat(555).Round(-1).String() // output: "560"
-//
+//	NewFromFloat(5.45).Round(1).String() // output: "5.4"
+//	NewFromFloat(545).Round(-1).String() // output: "540"
+//	NewFromFloat(5.46).Round(1).String() // output: "5.5"
+//	NewFromFloat(546).Round(-1).String() // output: "550"
+//	NewFromFloat(5.55).Round(1).String() // output: "5.6"
+//	NewFromFloat(555).Round(-1).String() // output: "560"
 func (d Decimal) RoundBank(places int32) Decimal {
 
 	round := d.Round(places)
@@ -719,12 +711,14 @@ func (d Decimal) RoundBank(places int32) Decimal {
 // interval. The amount payable for a cash transaction is rounded to the nearest
 // multiple of the minimum currency unit available. The following intervals are
 // available: 5, 10, 15, 25, 50 and 100; any other number throws a panic.
-//	    5:   5 cent rounding 3.43 => 3.45
-// 	   10:  10 cent rounding 3.45 => 3.50 (5 gets rounded up)
-// 	   15:  10 cent rounding 3.45 => 3.40 (5 gets rounded down)
-// 	   25:  25 cent rounding 3.41 => 3.50
-// 	   50:  50 cent rounding 3.75 => 4.00
-// 	  100: 100 cent rounding 3.50 => 4.00
+//
+//	  5:   5 cent rounding 3.43 => 3.45
+//	 10:  10 cent rounding 3.45 => 3.50 (5 gets rounded up)
+//	 15:  10 cent rounding 3.45 => 3.40 (5 gets rounded down)
+//	 25:  25 cent rounding 3.41 => 3.50
+//	 50:  50 cent rounding 3.75 => 4.00
+//	100: 100 cent rounding 3.50 => 4.00
+//
 // For more details: https://en.wikipedia.org/wiki/Cash_rounding
 func (d Decimal) RoundCash(interval uint8) Decimal {
 	var iVal *big.Int
@@ -806,8 +800,7 @@ func (d Decimal) Ceil() Decimal {
 //
 // Example:
 //
-//     decimal.NewFromString("123.456").Truncate(2).String() // "123.45"
-//
+//	decimal.NewFromString("123.456").Truncate(2).String() // "123.45"
 func (d Decimal) Truncate(precision int32) Decimal {
 	d.ensureInitialized()
 	if precision >= 0 && -precision > d.exp {
@@ -1001,7 +994,7 @@ func (d *Decimal) ensureInitialized() {
 //
 // To call this function with an array, you must do:
 //
-//     Min(arr[0], arr[1:]...)
+//	Min(arr[0], arr[1:]...)
 //
 // This makes it harder to accidentally call Min with 0 arguments.
 func Min(first Decimal, rest ...Decimal) Decimal {
@@ -1018,7 +1011,7 @@ func Min(first Decimal, rest ...Decimal) Decimal {
 //
 // To call this function with an array, you must do:
 //
-//     Max(arr[0], arr[1:]...)
+//	Max(arr[0], arr[1:]...)
 //
 // This makes it harder to accidentally call Max with 0 arguments.
 func Max(first Decimal, rest ...Decimal) Decimal {

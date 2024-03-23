@@ -16,7 +16,7 @@ func NewPage(pageIndex uint64, pageSize uint64, total uint64, data interface{}) 
 	return &Page{PageIndex: pageIndex, PageSize: pageSize, Data: data, Total: total}
 }
 
-//ToPageNumOrDefault 将字符串转换为数字类型 如果字符串为空 则赋值分页默认参数
+// ToPageNumOrDefault 将字符串转换为数字类型 如果字符串为空 则赋值分页默认参数
 func ToPageNumOrDefault(pageIndex string, pageSize string) (pIndex64 uint64, pSize64 uint64) {
 	var pageIndex64 uint64
 	var pageSize64 uint64
