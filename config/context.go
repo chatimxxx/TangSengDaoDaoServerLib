@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
@@ -79,7 +78,6 @@ func (c *Context) NewMySQL() *dbr.Session {
 	if c.mySQLSession == nil {
 		c.mySQLSession = db.NewMySQL(c.cfg.DB.MySQLAddr, c.cfg.DB.MySQLMaxOpenConns, c.cfg.DB.MySQLMaxIdleConns, c.cfg.DB.MySQLConnMaxLifetime)
 	}
-	c.Log.Info(fmt.Sprintf("初始化mysql   %s", c.cfg.DB.MySQLAddr))
 	return c.mySQLSession
 }
 

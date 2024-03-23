@@ -17,7 +17,6 @@ func Setup(ctx *config.Context, initSql bool) error {
 	// 获取所有模块
 	ms := register.GetModules(ctx)
 	// 初始化SQL
-	ctx.Log.Warn("2222222222222222222")
 	if initSql {
 		var sqlFSs []*register.SQLFS
 		for _, m := range ms {
@@ -31,10 +30,8 @@ func Setup(ctx *config.Context, initSql bool) error {
 			return err
 		}
 	}
-	ctx.Log.Warn("1111111111111")
 	// 注册api
 	for _, m := range ms {
-		ctx.Log.Warn(fmt.Sprintf("33333333333333333   %s", m.Name))
 		if m.SetupAPI != nil {
 			a := m.SetupAPI()
 			if a != nil {
