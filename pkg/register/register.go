@@ -96,7 +96,7 @@ type Module struct {
 	SetupTask func() TaskRouter
 	// 服务
 	// sql目录
-	SQLDir *SQLFS
+	SQLDir *SqlFS
 	// swagger文件
 	Swagger string
 	// im 数据源
@@ -114,12 +114,12 @@ func AddModule(moduleFnc func(ctx interface{}) Module) {
 	modules = append(modules, moduleFnc)
 }
 
-type SQLFS struct {
+type SqlFS struct {
 	embed.FS
 }
 
-func NewSQLFS(fs embed.FS) *SQLFS {
-	return &SQLFS{
+func NewSqlFS(fs embed.FS) *SqlFS {
+	return &SqlFS{
 		FS: fs,
 	}
 }
