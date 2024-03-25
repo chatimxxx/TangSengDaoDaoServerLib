@@ -129,7 +129,7 @@ func (c *Context) GetRedisConn() *redis.Conn {
 }
 
 // EventBegin 开启事件
-func (c *Context) EventBegin(data *wkevent.Data, tx *gorm.Tx) (int64, error) {
+func (c *Context) EventBegin(data *wkevent.Data, tx *gorm.DB) (int64, error) {
 	return c.Event.Begin(data, tx)
 }
 
