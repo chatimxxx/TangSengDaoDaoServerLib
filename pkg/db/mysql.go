@@ -2,8 +2,6 @@ package db
 
 import (
 	"fmt"
-	_ "github.com/go-sql-driver/mysql" // mysql
-	"github.com/gocraft/dbr/v2"
 	migrate "github.com/rubenv/sql-migrate"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -15,28 +13,22 @@ import (
 
 // NewMySQL 创建一个MySQL db，[path]db存储路径 [sqlDir]sql脚本目录
 func NewMySQL(addr string, maxOpenConns int, maxIdleConns int, connMaxLifetime time.Duration) *gorm.DB {
-	//conn, err := dbr.Open("mysql", addr, nil)
-	//if err != nil {
-	//	panic(err)
-	//}
-	//conn.SetMaxOpenConns(maxOpenConns)
-	//conn.SetMaxIdleConns(maxIdleConns)
-	//conn.SetConnMaxLifetime(connMaxLifetime) //mysql 默认超时时间为 60*60*8=28800 SetConnMaxLifetime设置为小于数据库超时时间即可
-	//
-	//session := conn.NewSession(nil)
-
-	session, err := gorm.Open(mysql.Open(addr), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(addr), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}
-	return session
+	return db
 }
 
-func Migration(sqlDir string, session *dbr.Session) error {
+func Migration(sqlDir string, db *gorm.DB) error {
 	migrations := &FileDirMigrationSource{
 		Dir: sqlDir,
 	}
-	_, err := migrate.Exec(session.DB, "mysql", migrations, migrate.Up)
+	s, err := db.DB()
+	if err != nil {
+		return err
+	}
+	_, err = migrate.Exec(s, "mysql", migrations, migrate.Up)
 	if err != nil {
 		return err
 	}

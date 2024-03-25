@@ -2,10 +2,9 @@ package config
 
 import (
 	"fmt"
+	"gorm.io/gorm"
 	"sync"
 	"sync/atomic"
-
-	"github.com/gocraft/dbr/v2"
 )
 
 var seqMap = map[string]*Seq{}
@@ -72,14 +71,14 @@ func (c *Context) GenSeq(flag string) int64 {
 
 }
 
-func addOrUpdateSeq(session *dbr.Session, m *seqModel) error {
-	_, err := session.InsertBySql("insert into `seq`(`key`,min_seq,step) values(?,?,?) ON DUPLICATE KEY UPDATE min_seq=VALUES(min_seq)", m.Key, m.MinSeq, m.Step).Exec()
+func addOrUpdateSeq(session *gorm.DB, m *seqModel) error {
+	err := session.Exec("insert into `seq`(`key`,min_seq,step) values(?,?,?) ON DUPLICATE KEY UPDATE min_seq=VALUES(min_seq)", m.Key, m.MinSeq, m.Step).Error
 	return err
 }
 
-func querySeqWithKey(session *dbr.Session, key string) (*seqModel, error) {
+func querySeqWithKey(session *gorm.DB, key string) (*seqModel, error) {
 	var m *seqModel
-	_, err := session.Select("*").From("seq").Where("`key`=?", key).Load(&m)
+	err := session.Table("seq").Select("*").Where("`key`=?", key).Find(&m).Error
 	return m, err
 }
 

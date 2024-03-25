@@ -119,7 +119,6 @@ type SQLFS struct {
 }
 
 func NewSQLFS(fs embed.FS) *SQLFS {
-
 	return &SQLFS{
 		FS: fs,
 	}

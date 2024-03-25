@@ -2,7 +2,7 @@ package module
 
 import (
 	"fmt"
-	"github.com/gocraft/dbr/v2"
+	"gorm.io/gorm"
 	"io"
 	"path"
 	"sort"
@@ -81,14 +81,19 @@ func Stop(ctx *config.Context) error {
 }
 
 // 执行sql
-func executeSQL(sqlfss []*register.SQLFS, session *dbr.Session) error {
-	migrations := &FileDirMigrationSource{
-		sqlfss: sqlfss,
-	}
-	_, err := migrate.Exec(session.DB, "mysql", migrations, migrate.Up)
-	if err != nil {
-		return err
-	}
+func executeSQL(sqlfss []*register.SQLFS, db *gorm.DB) error {
+	//migrations := &FileDirMigrationSource{
+	//	sqlfss: sqlfss,
+	//}
+
+	//_, err := migrate.Exec(session.DB, "mysql", migrations, migrate.Up)
+	//if err != nil {
+	//	return err
+	//}
+	//err := db.Debug().Migrator().FS(migrations).AutoMigrate(&User{})
+	//if err != nil {
+	//	log.Fatalf("failed to migrate: %v", err)
+	//}
 	return nil
 }
 
@@ -125,13 +130,11 @@ func (f FileDirMigrationSource) FindMigrations() ([]*migrate.Migration, error) {
 }
 
 func (f FileDirMigrationSource) findMigrations(fs *register.SQLFS, migrations *[]*migrate.Migration) error {
-
 	files, err := fs.ReadDir("sql")
 	if err != nil {
 		return err
 	}
 	for _, info := range files {
-
 		if strings.HasSuffix(info.Name(), ".sql") {
 			file, err := fs.Open(path.Join("sql", info.Name()))
 			if err != nil {
@@ -146,6 +149,5 @@ func (f FileDirMigrationSource) findMigrations(fs *register.SQLFS, migrations *[
 
 		}
 	}
-
 	return nil
 }
