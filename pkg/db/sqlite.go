@@ -11,7 +11,6 @@ import (
 
 // NewSqlite 创建一个sqlite db，[path]db存储路径 [sqlDir]sql脚本目录
 func NewSqlite(filepath string, sqlDir string) *dbr.Session {
-
 	err := os.Mkdir(path.Dir(filepath), os.ModePerm)
 	if err != nil && !os.IsExist(err) {
 		panic(err)

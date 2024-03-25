@@ -1,6 +1,8 @@
 package wkevent
 
-import "github.com/gocraft/dbr/v2"
+import (
+	"gorm.io/gorm"
+)
 
 type Type int
 
@@ -36,7 +38,7 @@ type Data struct {
 }
 type Event interface {
 	// 开启事件
-	Begin(data *Data, tx *dbr.Tx) (int64, error)
+	Begin(data *Data, tx *gorm.Tx) (int64, error)
 	// 提交事件
 	Commit(eventId int64)
 }

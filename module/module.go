@@ -2,6 +2,7 @@ package module
 
 import (
 	"fmt"
+	"github.com/gocraft/dbr/v2"
 	"io"
 	"path"
 	"sort"
@@ -9,7 +10,6 @@ import (
 
 	"github.com/chatimxxx/TangSengDaoDaoServerLib/config"
 	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/register"
-	"github.com/gocraft/dbr/v2"
 	migrate "github.com/rubenv/sql-migrate"
 )
 

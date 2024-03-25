@@ -80,7 +80,6 @@ func Configure(opts *Options) {
 	} else {
 		warnLogger = zap.New(core)
 	}
-
 }
 
 func newEncoderConfig() zapcore.EncoderConfig {
