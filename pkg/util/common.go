@@ -6,11 +6,6 @@ import (
 )
 
 // CheckErr CheckErr
-func CheckErr(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
 
 // Substr Substr
 func Substr(str string, start, length int) string {
