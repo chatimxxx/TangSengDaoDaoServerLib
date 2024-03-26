@@ -12,12 +12,8 @@ import (
 )
 
 // NewMySQL 创建一个MySQL db，[path]db存储路径 [sqlDir]sql脚本目录
-func NewMySQL(addr string, maxOpenConns int, maxIdleConns int, connMaxLifetime time.Duration) *gorm.DB {
-	db, err := gorm.Open(mysql.Open(addr), &gorm.Config{})
-	if err != nil {
-		panic("failed to connect database")
-	}
-	return db
+func NewMySQL(addr string, maxOpenConns int, maxIdleConns int, connMaxLifetime time.Duration) (*gorm.DB, error) {
+	return gorm.Open(mysql.Open(addr), &gorm.Config{})
 }
 
 func Migration(sqlDir string, db *gorm.DB) error {

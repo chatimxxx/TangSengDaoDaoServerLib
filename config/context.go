@@ -74,11 +74,11 @@ func (c *Context) GetConfig() *Config {
 }
 
 // NewMySQL 创建mysql数据库实例
-func (c *Context) NewMySQL() *gorm.DB {
+func (c *Context) NewMySQL() (*gorm.DB, error) {
 	if c.mySQLSession == nil {
-		c.mySQLSession = db.NewMySQL(c.cfg.DB.MySQLAddr, c.cfg.DB.MySQLMaxOpenConns, c.cfg.DB.MySQLMaxIdleConns, c.cfg.DB.MySQLConnMaxLifetime)
+		return db.NewMySQL(c.cfg.DB.MySQLAddr, c.cfg.DB.MySQLMaxOpenConns, c.cfg.DB.MySQLMaxIdleConns, c.cfg.DB.MySQLConnMaxLifetime)
 	}
-	return c.mySQLSession
+	return c.mySQLSession, nil
 }
 
 // AsyncTask 异步任务
@@ -92,7 +92,7 @@ func (c *Context) Tracer() *Tracer {
 }
 
 // DB DB
-func (c *Context) DB() *gorm.DB {
+func (c *Context) DB() (*gorm.DB, error) {
 	return c.NewMySQL()
 }
 
