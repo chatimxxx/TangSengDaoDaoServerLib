@@ -24,7 +24,11 @@ func Setup(ctx *config.Context, initSql bool) error {
 				sqlFSs = append(sqlFSs, m.SQLDir)
 			}
 		}
-		err := executeSQL(sqlFSs, ctx.DB())
+		db, err := ctx.DB()
+		if err != nil {
+			return err
+		}
+		err = executeSQL(sqlFSs, db)
 		if err != nil {
 			return err
 		}

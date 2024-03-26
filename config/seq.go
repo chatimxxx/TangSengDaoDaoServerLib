@@ -18,20 +18,23 @@ type Seq struct {
 }
 
 // GenSeq 生产序号
-func (c *Context) GenSeq(flag string) int64 {
+func (c *Context) GenSeq(flag string) (int64, error) {
 	seqLock.RLock()
 	seq := seqMap[flag]
 	seqLock.RUnlock()
 	key := fmt.Sprintf("seq:%s", flag)
 	if seq == nil {
-		// seqStr, err := c.Cache().Get(key)
-		seqM, err := querySeqWithKey(c.DB(), key)
+		db, err := c.DB()
 		if err != nil {
-			panic(err)
+			return 0, err
+		}
+		seqM, err := querySeqWithKey(db, key)
+		if err != nil {
+			return 0, err
 		}
 		if seqM == nil {
 			var currSeq int64 = 1000000 // TODO: 为了兼容老的（以前放redis的）所以这里起始seq尽量大点
-			err = addOrUpdateSeq(c.DB(), &seqModel{
+			err = addOrUpdateSeq(db, &seqModel{
 				Key:    key,
 				Step:   int(seqStep),
 				MinSeq: currSeq + seqStep,
@@ -56,8 +59,12 @@ func (c *Context) GenSeq(flag string) int64 {
 		seqLock.Unlock()
 	}
 	if seq.CurSeq >= seq.MaxSeq { // 超过了最大序号
+		db, err := c.DB()
+		if err != nil {
+			return 0, err
+		}
 		// err := c.Cache().Set(key, fmt.Sprintf("%d", seq.CurSeq+seqStep))
-		err := addOrUpdateSeq(c.DB(), &seqModel{
+		err = addOrUpdateSeq(db, &seqModel{
 			Key:    key,
 			Step:   int(seqStep),
 			MinSeq: seq.CurSeq + seqStep,
@@ -67,7 +74,7 @@ func (c *Context) GenSeq(flag string) int64 {
 		}
 		seq.MaxSeq += seqStep
 	}
-	return atomic.AddInt64(&seq.CurSeq, 1)
+	return atomic.AddInt64(&seq.CurSeq, 1), nil
 
 }
 
