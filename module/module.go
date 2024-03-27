@@ -2,7 +2,6 @@ package module
 
 import (
 	"fmt"
-	"gorm.io/gorm"
 	"io"
 	"path"
 	"sort"
@@ -10,6 +9,7 @@ import (
 
 	"github.com/chatimxxx/TangSengDaoDaoServerLib/config"
 	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/register"
+	"github.com/gocraft/dbr/v2"
 	migrate "github.com/rubenv/sql-migrate"
 )
 
@@ -18,17 +18,14 @@ func Setup(ctx *config.Context, initSql bool) error {
 	ms := register.GetModules(ctx)
 	// 初始化SQL
 	if initSql {
-		var sqlFSs []*register.SqlFS
+		var sqlFSs []*register.SQLFS
 		for _, m := range ms {
 			if m.SQLDir != nil {
 				sqlFSs = append(sqlFSs, m.SQLDir)
 			}
+
 		}
-		db, err := ctx.DB()
-		if err != nil {
-			return err
-		}
-		err = executeSQL(sqlFSs, db)
+		err := executeSQL(sqlFSs, ctx.DB())
 		if err != nil {
 			return err
 		}
@@ -51,6 +48,7 @@ func Setup(ctx *config.Context, initSql bool) error {
 		}
 	}
 	return nil
+
 }
 
 func Start(ctx *config.Context) error {
@@ -63,6 +61,7 @@ func Start(ctx *config.Context) error {
 				return err
 			}
 		}
+
 	}
 	return nil
 }
@@ -76,28 +75,19 @@ func Stop(ctx *config.Context) error {
 				return err
 			}
 		}
+
 	}
 	return nil
 }
 
 // 执行sql
-func executeSQL(sqlFss []*register.SqlFS, db *gorm.DB) error {
+func executeSQL(sqlfss []*register.SQLFS, session *dbr.Session) error {
 	migrations := &FileDirMigrationSource{
-		sqlFss: sqlFss,
+		sqlfss: sqlfss,
 	}
-	s, err := db.DB()
+	_, err := migrate.Exec(session.DB, "mysql", migrations, migrate.Up)
 	if err != nil {
 		return err
-	}
-	_, fms, err := migrations.FindMigrations()
-	if err != nil {
-		return err
-	}
-	for _, fm := range fms {
-		_, err := migrate.Exec(s, "mysql", fm, migrate.Up)
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -110,50 +100,52 @@ func (b byID) Less(i, j int) bool { return b[i].Less(b[j]) }
 
 // FileDirMigrationSource 文件目录源 遇到目录进行递归获取
 type FileDirMigrationSource struct {
-	sqlFss []*register.SqlFS
+	sqlfss []*register.SQLFS
 }
 
 // FindMigrations FindMigrations
-func (f FileDirMigrationSource) FindMigrations() ([]*migrate.Migration, []*migrate.FileMigrationSource, error) {
-	if len(f.sqlFss) == 0 {
-		return nil, nil, nil
+func (f FileDirMigrationSource) FindMigrations() ([]*migrate.Migration, error) {
+
+	if len(f.sqlfss) == 0 {
+		return nil, nil
 	}
 	migrations := make([]*migrate.Migration, 0, 100)
-	fmss := make([]*migrate.FileMigrationSource, 0)
-	for _, sqlFs := range f.sqlFss {
-		fms, err := f.findMigrations(sqlFs, &migrations)
+
+	for _, sqlfs := range f.sqlfss {
+		err := f.findMigrations(sqlfs, &migrations)
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
-		fmss = append(fmss, fms...)
 	}
+
 	// Make sure migrations are sorted
 	sort.Sort(byID(migrations))
-	return migrations, fmss, nil
+
+	return migrations, nil
 }
 
-func (f FileDirMigrationSource) findMigrations(fs *register.SqlFS, migrations *[]*migrate.Migration) ([]*migrate.FileMigrationSource, error) {
+func (f FileDirMigrationSource) findMigrations(fs *register.SQLFS, migrations *[]*migrate.Migration) error {
+
 	files, err := fs.ReadDir("sql")
 	if err != nil {
-		return nil, err
+		return err
 	}
-	fms := make([]*migrate.FileMigrationSource, 0)
 	for _, info := range files {
+
 		if strings.HasSuffix(info.Name(), ".sql") {
 			file, err := fs.Open(path.Join("sql", info.Name()))
 			if err != nil {
-				return nil, fmt.Errorf("error while opening %s: %s", info.Name(), err)
+				return fmt.Errorf("error while opening %s: %s", info.Name(), err)
 			}
+
 			migration, err := migrate.ParseMigration(info.Name(), file.(io.ReadSeeker))
 			if err != nil {
-				return nil, fmt.Errorf("error while parsing %s: %s", info.Name(), err)
+				return fmt.Errorf("error while parsing %s: %s", info.Name(), err)
 			}
 			*migrations = append(*migrations, migration)
-			fm := &migrate.FileMigrationSource{
-				Dir: path.Join("sql", info.Name()),
-			}
-			fms = append(fms, fm)
+
 		}
 	}
-	return fms, nil
+
+	return nil
 }

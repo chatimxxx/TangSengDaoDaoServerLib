@@ -85,9 +85,9 @@ func (c *Context) ResponseErrorWithStatus(err error, status int) {
 }
 
 // GetPage 获取页参数
-func (c *Context) GetPage() (pageIndex int, pageSize int) {
-	pageIndex, _ = strconv.Atoi(c.Query("page_index"))
-	pageSize, _ = strconv.Atoi(c.Query("page_size"))
+func (c *Context) GetPage() (pageIndex int64, pageSize int64) {
+	pageIndex, _ = strconv.ParseInt(c.Query("page_index"), 10, 64)
+	pageSize, _ = strconv.ParseInt(c.Query("page_size"), 10, 64)
 	if pageIndex <= 0 {
 		pageIndex = 1
 	}

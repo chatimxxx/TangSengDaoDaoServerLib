@@ -1,7 +1,6 @@
 package config
 
 import (
-	"gorm.io/gorm"
 	"sync"
 	"time"
 
@@ -15,6 +14,7 @@ import (
 	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/redis"
 	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/wkevent"
 	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/wkhttp"
+	"github.com/gocraft/dbr/v2"
 	"github.com/olivere/elastic"
 	"github.com/opentracing/opentracing-go"
 )
@@ -22,7 +22,7 @@ import (
 // Context 配置上下文
 type Context struct {
 	cfg          *Config
-	mySQLSession *gorm.DB
+	mySQLSession *dbr.Session
 	redisCache   *common.RedisCache
 	memoryCache  cache.Cache
 	log.Log
@@ -74,11 +74,11 @@ func (c *Context) GetConfig() *Config {
 }
 
 // NewMySQL 创建mysql数据库实例
-func (c *Context) NewMySQL() (*gorm.DB, error) {
+func (c *Context) NewMySQL() *dbr.Session {
 	if c.mySQLSession == nil {
-		return db.NewMySQL(c.cfg.DB.MySQLAddr, c.cfg.DB.MySQLMaxOpenConns, c.cfg.DB.MySQLMaxIdleConns, c.cfg.DB.MySQLConnMaxLifetime)
+		c.mySQLSession = db.NewMySQL(c.cfg.DB.MySQLAddr, c.cfg.DB.MySQLMaxOpenConns, c.cfg.DB.MySQLMaxIdleConns, c.cfg.DB.MySQLConnMaxLifetime)
 	}
-	return c.mySQLSession, nil
+	return c.mySQLSession
 }
 
 // AsyncTask 异步任务
@@ -92,7 +92,7 @@ func (c *Context) Tracer() *Tracer {
 }
 
 // DB DB
-func (c *Context) DB() (*gorm.DB, error) {
+func (c *Context) DB() *dbr.Session {
 	return c.NewMySQL()
 }
 
@@ -129,7 +129,7 @@ func (c *Context) GetRedisConn() *redis.Conn {
 }
 
 // EventBegin 开启事件
-func (c *Context) EventBegin(data *wkevent.Data, tx *gorm.DB) (int64, error) {
+func (c *Context) EventBegin(data *wkevent.Data, tx *dbr.Tx) (int64, error) {
 	return c.Event.Begin(data, tx)
 }
 

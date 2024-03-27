@@ -2,29 +2,37 @@ package db
 
 import (
 	"fmt"
-	migrate "github.com/rubenv/sql-migrate"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
 	"net/http"
 	"sort"
 	"strings"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql" // mysql
+	"github.com/gocraft/dbr/v2"
+	migrate "github.com/rubenv/sql-migrate"
 )
 
 // NewMySQL 创建一个MySQL db，[path]db存储路径 [sqlDir]sql脚本目录
-func NewMySQL(addr string, maxOpenConns int, maxIdleConns int, connMaxLifetime time.Duration) (*gorm.DB, error) {
-	return gorm.Open(mysql.Open(addr), &gorm.Config{})
+func NewMySQL(addr string, maxOpenConns int, maxIdleConns int, connMaxLifetime time.Duration) *dbr.Session {
+
+	conn, err := dbr.Open("mysql", addr, nil)
+	if err != nil {
+		panic(err)
+	}
+	conn.SetMaxOpenConns(maxOpenConns)
+	conn.SetMaxIdleConns(maxIdleConns)
+	conn.SetConnMaxLifetime(connMaxLifetime) //mysql 默认超时时间为 60*60*8=28800 SetConnMaxLifetime设置为小于数据库超时时间即可
+
+	session := conn.NewSession(nil)
+
+	return session
 }
 
-func Migration(sqlDir string, db *gorm.DB) error {
+func Migration(sqlDir string, session *dbr.Session) error {
 	migrations := &FileDirMigrationSource{
 		Dir: sqlDir,
 	}
-	s, err := db.DB()
-	if err != nil {
-		return err
-	}
-	_, err = migrate.Exec(s, "mysql", migrations, migrate.Up)
+	_, err := migrate.Exec(session.DB, "mysql", migrations, migrate.Up)
 	if err != nil {
 		return err
 	}
@@ -57,6 +65,7 @@ func (f FileDirMigrationSource) FindMigrations() ([]*migrate.Migration, error) {
 }
 
 func (f FileDirMigrationSource) findMigrations(dir http.FileSystem, migrations *[]*migrate.Migration) error {
+
 	file, err := dir.Open("/")
 	if err != nil {
 		return err

@@ -11,9 +11,9 @@ const (
 type Time time.Time
 
 type BaseModel struct {
-	Id        *int64
-	CreatedAt *Time
-	UpdatedAt *Time
+	Id        int64
+	CreatedAt Time
+	UpdatedAt Time
 }
 
 func (t *Time) UnmarshalJSON(data []byte) (err error) {
