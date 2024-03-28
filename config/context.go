@@ -15,8 +15,8 @@ import (
 	"github.com/xochat/xochat_im_server_lib/pkg/log"
 	"github.com/xochat/xochat_im_server_lib/pkg/pool"
 	"github.com/xochat/xochat_im_server_lib/pkg/redis"
-	"github.com/xochat/xochat_im_server_lib/pkg/wkevent"
-	"github.com/xochat/xochat_im_server_lib/pkg/wkhttp"
+	"github.com/xochat/xochat_im_server_lib/pkg/xoevent"
+	"github.com/xochat/xochat_im_server_lib/pkg/xohttp"
 )
 
 // Context 配置上下文
@@ -29,14 +29,14 @@ type Context struct {
 	EventPool      pool.Collector
 	PushPool       pool.Collector // 离线push
 	RobotEventPool pool.Collector // 机器人事件pool
-	Event          wkevent.Event
+	Event          xoevent.Event
 	elasticClient  *elastic.Client
 	UserIDGen      *snowflake.Node          // 消息ID生成器
 	tracer         *Tracer                  // 调用链追踪
 	aysncTask      *AsyncTask               // 异步任务
 	timingWheel    *timingwheel.TimingWheel // Time wheel delay task
 
-	httpRouter *wkhttp.WKHttp
+	httpRouter *xohttp.XOHttp
 
 	valueMap  sync.Map
 	SetupTask bool // 是否安装task
@@ -118,7 +118,7 @@ func (c *Context) Cache() cache.Cache {
 }
 
 // 认证中间件
-func (c *Context) AuthMiddleware(r *wkhttp.WKHttp) wkhttp.HandlerFunc {
+func (c *Context) AuthMiddleware(r *xohttp.XOHttp) xohttp.HandlerFunc {
 
 	return r.AuthMiddleware(c.Cache(), c.cfg.Cache.TokenCachePrefix)
 }
@@ -129,7 +129,7 @@ func (c *Context) GetRedisConn() *redis.Conn {
 }
 
 // EventBegin 开启事件
-func (c *Context) EventBegin(data *wkevent.Data, tx *dbr.Tx) (int64, error) {
+func (c *Context) EventBegin(data *xoevent.Data, tx *dbr.Tx) (int64, error) {
 	return c.Event.Begin(data, tx)
 }
 
@@ -145,11 +145,11 @@ func (c *Context) Schedule(interval time.Duration, f func()) *timingwheel.Timer 
 	}, f)
 }
 
-func (c *Context) GetHttpRoute() *wkhttp.WKHttp {
+func (c *Context) GetHttpRoute() *xohttp.XOHttp {
 	return c.httpRouter
 }
 
-func (c *Context) SetHttpRoute(r *wkhttp.WKHttp) {
+func (c *Context) SetHttpRoute(r *xohttp.XOHttp) {
 	c.httpRouter = r
 }
 

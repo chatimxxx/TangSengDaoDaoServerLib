@@ -12,12 +12,12 @@ import (
 	"github.com/xochat/xochat_im_server_lib/module"
 	"github.com/xochat/xochat_im_server_lib/pkg/log"
 	"github.com/xochat/xochat_im_server_lib/pkg/register"
-	"github.com/xochat/xochat_im_server_lib/pkg/wkhttp"
+	"github.com/xochat/xochat_im_server_lib/pkg/xohttp"
 )
 
 // Server唐僧叨叨server
 type Server struct {
-	r *wkhttp.WKHttp
+	r *xohttp.XOHttp
 	log.TLog
 	sslAddr  string
 	addr     string
@@ -27,8 +27,8 @@ type Server struct {
 
 // New 创建悟空聊天server
 func New(ctx *config.Context) *Server {
-	r := wkhttp.New()
-	r.Use(wkhttp.CORSMiddleware())
+	r := xohttp.New()
+	r.Use(xohttp.CORSMiddleware())
 	s := &Server{
 		ctx:      ctx,
 		r:        r,
@@ -51,11 +51,11 @@ func (s *Server) Init(env svc.Environment) error {
 func (s *Server) run(sslAddr string, addr ...string) error {
 	// s.r.LoadHTMLGlob("assets/webroot/**/*.html")
 	s.r.Static("/web", "./assets/web")
-	s.r.Any("/v1/ping", func(c *wkhttp.Context) {
+	s.r.Any("/v1/ping", func(c *xohttp.Context) {
 		c.ResponseOK()
 	})
 
-	s.r.Any("/swagger/:module", func(c *wkhttp.Context) {
+	s.r.Any("/swagger/:module", func(c *xohttp.Context) {
 		m := c.Param("module")
 		module := register.GetModuleByName(m, s.ctx)
 		if strings.TrimSpace(module.Swagger) == "" {
@@ -111,8 +111,8 @@ func (s *Server) Stop() error {
 	return module.Stop(s.ctx)
 }
 
-func TlsHandler(sslAddr string) wkhttp.HandlerFunc {
-	return func(c *wkhttp.Context) {
+func TlsHandler(sslAddr string) xohttp.HandlerFunc {
+	return func(c *xohttp.Context) {
 		secureMiddleware := secure.New(secure.Options{
 			SSLRedirect: true,
 			SSLHost:     sslAddr,
@@ -129,6 +129,6 @@ func TlsHandler(sslAddr string) wkhttp.HandlerFunc {
 }
 
 // GetRoute 获取路由
-func (s *Server) GetRoute() *wkhttp.WKHttp {
+func (s *Server) GetRoute() *xohttp.XOHttp {
 	return s.r
 }

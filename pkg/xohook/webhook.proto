@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package wkhook;
+package xohook;
 
-option go_package = "./;wkhook";
+option go_package = "./;xohook";
 
 service WebhookService {
   // 发送webhook事件

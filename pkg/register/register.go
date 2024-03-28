@@ -6,12 +6,12 @@ import (
 	"sync"
 
 	"github.com/xochat/xochat_im_server_lib/model"
-	"github.com/xochat/xochat_im_server_lib/pkg/wkhttp"
+	"github.com/xochat/xochat_im_server_lib/pkg/xohttp"
 )
 
 // APIRouter api路由者
 type APIRouter interface {
-	Route(r *wkhttp.WKHttp)
+	Route(r *xohttp.XOHttp)
 }
 
 // var apiRoutes = make([]APIRouter, 0)

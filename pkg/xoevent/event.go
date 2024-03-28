@@ -1,4 +1,4 @@
-package wkevent
+package xoevent
 
 import "github.com/gocraft/dbr/v2"
 
