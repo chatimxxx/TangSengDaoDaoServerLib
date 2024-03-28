@@ -8,4 +8,9 @@
 
 唐僧叨叨 使用 Apache 2.0 许可证。有关详情，请参阅 LICENSE 文件。
 
+```cmd
+git tag v1.0.0-$(git rev-parse HEAD)
+```
+
+
 
