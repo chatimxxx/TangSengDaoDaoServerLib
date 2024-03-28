@@ -6,13 +6,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/config"
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/module"
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/log"
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/register"
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/wkhttp"
 	"github.com/judwhite/go-svc"
 	"github.com/unrolled/secure"
+	"github.com/xochat/xochat_im_server_lib/config"
+	"github.com/xochat/xochat_im_server_lib/module"
+	"github.com/xochat/xochat_im_server_lib/pkg/log"
+	"github.com/xochat/xochat_im_server_lib/pkg/register"
+	"github.com/xochat/xochat_im_server_lib/pkg/wkhttp"
 )
 
 // Server唐僧叨叨server
@@ -49,7 +49,6 @@ func (s *Server) Init(env svc.Environment) error {
 
 // Run 运行
 func (s *Server) run(sslAddr string, addr ...string) error {
-
 	// s.r.LoadHTMLGlob("assets/webroot/**/*.html")
 	s.r.Static("/web", "./assets/web")
 	s.r.Any("/v1/ping", func(c *wkhttp.Context) {
@@ -64,7 +63,6 @@ func (s *Server) run(sslAddr string, addr ...string) error {
 			return
 		}
 		c.String(http.StatusOK, module.Swagger)
-
 	})
 
 	if len(addr) != 0 {
@@ -81,7 +79,6 @@ func (s *Server) run(sslAddr string, addr ...string) error {
 				return err
 			}
 		}
-
 	}
 
 	// https 服务
@@ -90,9 +87,7 @@ func (s *Server) run(sslAddr string, addr ...string) error {
 		currDir, _ := os.Getwd()
 		return s.r.RunTLS(sslAddr, currDir+"/assets/ssl/ssl.pem", currDir+"/assets/ssl/ssl.key")
 	}
-
 	return nil
-
 }
 
 func (s *Server) Start() error {

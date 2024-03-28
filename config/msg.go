@@ -7,11 +7,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/common"
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/network"
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/util"
 	"github.com/sendgrid/rest"
 	"github.com/tidwall/gjson"
+	"github.com/xochat/xochat_im_server_lib/common"
+	"github.com/xochat/xochat_im_server_lib/pkg/network"
+	"github.com/xochat/xochat_im_server_lib/pkg/util"
 	"go.uber.org/zap"
 )
 
@@ -168,7 +168,6 @@ func (c *Context) SendMessageWithResult(req *MsgSendReq) (*MsgSendResp, error) {
 
 // SendFriendApply 发送好友申请请求
 func (c *Context) SendFriendApply(req *MsgFriendApplyReq) error {
-
 	return c.SendMessage(&MsgSendReq{
 		Header: MsgHeader{
 			NoPersist: 0,
@@ -239,7 +238,6 @@ func (c *Context) IMCreateOrUpdateChannel(req *ChannelCreateReq) error {
 
 // IMBlacklistAdd 添加黑名单
 func (c *Context) IMBlacklistAdd(req ChannelBlacklistReq) error {
-
 	resp, err := network.Post(c.cfg.WuKongIM.APIURL+"/channel/blacklist_add", []byte(util.ToJson(req)), nil)
 	if err != nil {
 		return err
@@ -259,7 +257,6 @@ func (c *Context) IMBlacklistSet(req ChannelBlacklistReq) error {
 
 // IMBlacklistRemove 移除黑名单
 func (c *Context) IMBlacklistRemove(req ChannelBlacklistReq) error {
-
 	resp, err := network.Post(c.cfg.WuKongIM.APIURL+"/channel/blacklist_remove", []byte(util.ToJson(req)), nil)
 	if err != nil {
 		return err
@@ -269,7 +266,6 @@ func (c *Context) IMBlacklistRemove(req ChannelBlacklistReq) error {
 
 // IMWhitelistAdd 添加白名单
 func (c *Context) IMWhitelistAdd(req ChannelWhitelistReq) error {
-
 	resp, err := network.Post(c.cfg.WuKongIM.APIURL+"/channel/whitelist_add", []byte(util.ToJson(req)), nil)
 	if err != nil {
 		return err
@@ -279,7 +275,6 @@ func (c *Context) IMWhitelistAdd(req ChannelWhitelistReq) error {
 
 // IMWhitelistSet 白名单设置（覆盖旧的数据）
 func (c *Context) IMWhitelistSet(req ChannelWhitelistReq) error {
-
 	resp, err := network.Post(c.cfg.WuKongIM.APIURL+"/channel/whitelist_set", []byte(util.ToJson(req)), nil)
 	if err != nil {
 		return err
@@ -289,7 +284,6 @@ func (c *Context) IMWhitelistSet(req ChannelWhitelistReq) error {
 
 // IMWhitelistRemove 移除白名单
 func (c *Context) IMWhitelistRemove(req ChannelWhitelistReq) error {
-
 	resp, err := network.Post(c.cfg.WuKongIM.APIURL+"/channel/whitelist_remove", []byte(util.ToJson(req)), nil)
 	if err != nil {
 		return err
@@ -299,7 +293,6 @@ func (c *Context) IMWhitelistRemove(req ChannelWhitelistReq) error {
 
 // IMAddSubscriber 请求IM创建频道
 func (c *Context) IMAddSubscriber(req *SubscriberAddReq) error {
-
 	resp, err := network.Post(c.cfg.WuKongIM.APIURL+"/channel/subscriber_add", []byte(util.ToJson(req)), nil)
 	if err != nil {
 		return err
@@ -312,7 +305,6 @@ func (c *Context) IMAddSubscriber(req *SubscriberAddReq) error {
 
 // IMRemoveSubscriber 请求IM创建频道
 func (c *Context) IMRemoveSubscriber(req *SubscriberRemoveReq) error {
-
 	resp, err := network.Post(c.cfg.WuKongIM.APIURL+"/channel/subscriber_remove", []byte(util.ToJson(req)), nil)
 	if err != nil {
 		return err
@@ -322,7 +314,6 @@ func (c *Context) IMRemoveSubscriber(req *SubscriberRemoveReq) error {
 
 // IMGetConversations 获取用户最近会话列表
 func (c *Context) IMGetConversations(uid string) ([]*ConversationResp, error) {
-
 	resp, err := network.Get(c.cfg.WuKongIM.APIURL+"/conversations", map[string]string{
 		"uid": uid,
 	}, nil)
@@ -343,7 +334,6 @@ func (c *Context) IMGetConversations(uid string) ([]*ConversationResp, error) {
 
 // IMClearConversationUnread 清除用户某个频道的未读数
 func (c *Context) IMClearConversationUnread(req ClearConversationUnreadReq) error {
-
 	resp, err := network.Post(c.cfg.WuKongIM.APIURL+"/conversations/setUnread", []byte(util.ToJson(req)), nil)
 	if err != nil {
 		return nil
@@ -353,7 +343,6 @@ func (c *Context) IMClearConversationUnread(req ClearConversationUnreadReq) erro
 
 // IMDeleteConversation 删除最近会话
 func (c *Context) IMDeleteConversation(req DeleteConversationReq) error {
-
 	resp, err := network.Post(c.cfg.WuKongIM.APIURL+"/conversations/delete", []byte(util.ToJson(req)), nil)
 	if err != nil {
 		return nil
@@ -363,7 +352,6 @@ func (c *Context) IMDeleteConversation(req DeleteConversationReq) error {
 
 // IMSyncUserConversation 同步用户会话数据
 func (c *Context) IMSyncUserConversation(uid string, version int64, msgCount int64, lastMsgSeqs string, larges []*Channel) ([]*SyncUserConversationResp, error) {
-
 	resp, err := network.Post(c.cfg.WuKongIM.APIURL+"/conversation/sync", []byte(util.ToJson(map[string]interface{}{
 		"uid":           uid,
 		"version":       version,
@@ -402,7 +390,6 @@ func (c *Context) IMSyncUserConversation(uid string, version int64, msgCount int
 
 // IMSyncChannelMessage 同步频道消息
 func (c *Context) IMSyncChannelMessage(req SyncChannelMessageReq) (*SyncChannelMessageResp, error) {
-
 	resp, err := network.Post(c.cfg.WuKongIM.APIURL+"/channel/messagesync", []byte(util.ToJson(req)), nil)
 	if err != nil {
 		return nil, err
@@ -421,7 +408,6 @@ func (c *Context) IMSyncChannelMessage(req SyncChannelMessageReq) (*SyncChannelM
 
 // IMSyncMessage 同步IM消息
 func (c *Context) IMSyncMessage(req *MsgSyncReq) ([]*MessageResp, error) {
-
 	resp, err := network.Post(c.cfg.WuKongIM.APIURL+"/message/sync", []byte(util.ToJson(req)), nil)
 	if err != nil {
 		return nil, err

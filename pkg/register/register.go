@@ -5,8 +5,8 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/model"
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/wkhttp"
+	"github.com/xochat/xochat_im_server_lib/model"
+	"github.com/xochat/xochat_im_server_lib/pkg/wkhttp"
 )
 
 // APIRouter api路由者

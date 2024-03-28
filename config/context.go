@@ -6,17 +6,17 @@ import (
 
 	"github.com/RussellLuo/timingwheel"
 	"github.com/bwmarrin/snowflake"
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/common"
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/cache"
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/db"
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/log"
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/pool"
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/redis"
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/wkevent"
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/wkhttp"
 	"github.com/gocraft/dbr/v2"
 	"github.com/olivere/elastic"
 	"github.com/opentracing/opentracing-go"
+	"github.com/xochat/xochat_im_server_lib/common"
+	"github.com/xochat/xochat_im_server_lib/pkg/cache"
+	"github.com/xochat/xochat_im_server_lib/pkg/db"
+	"github.com/xochat/xochat_im_server_lib/pkg/log"
+	"github.com/xochat/xochat_im_server_lib/pkg/pool"
+	"github.com/xochat/xochat_im_server_lib/pkg/redis"
+	"github.com/xochat/xochat_im_server_lib/pkg/wkevent"
+	"github.com/xochat/xochat_im_server_lib/pkg/wkhttp"
 )
 
 // Context 配置上下文

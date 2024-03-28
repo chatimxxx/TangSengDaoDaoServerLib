@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/util"
 	"github.com/spf13/cast"
 	"github.com/spf13/viper"
+	"github.com/xochat/xochat_im_server_lib/pkg/util"
 	"go.uber.org/zap/zapcore"
 )
 

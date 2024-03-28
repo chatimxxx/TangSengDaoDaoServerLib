@@ -1,6 +1,6 @@
 package model
 
-import "github.com/chatimxxx/TangSengDaoDaoServerLib/config"
+import "github.com/xochat/xochat_im_server_lib/config"
 
 type ChannelResp struct {
 	Channel struct {
