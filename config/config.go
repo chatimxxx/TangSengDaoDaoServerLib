@@ -67,7 +67,8 @@ type Config struct {
 	AppName                     string // APP名称
 	Version                     string // 版本
 	RootDir                     string // 数据根目录
-	Addr                        string // 服务监听地址 x.x.x.x:8080
+	Host                        string // 服务监听地址 x.x.x.x:8080
+	Port                        int    // 8080
 	GRPCAddr                    string // grpc的通信地址 （建议内网通信）
 	SSLAddr                     string // ssl 监听地址
 	MessageSaveAcrossDevice     bool   // 消息是否跨设备保存（换设备登录消息是否还能同步到老消息）
@@ -253,7 +254,7 @@ func New() *Config {
 		Mode:                        ReleaseMode,
 		AppID:                       "tangsengdaodao",
 		AppName:                     "唐僧叨叨",
-		Addr:                        ":8090",
+		Host:                        "0.0.0.0",
 		GRPCAddr:                    "0.0.0.0:6979",
 		PhoneSearchOff:              false,
 		OnlineStatusOn:              true,
@@ -465,7 +466,8 @@ func (c *Config) ConfigureWithViper(vp *viper.Viper) {
 	c.AppName = c.getString("appName", c.AppName)
 	c.RootDir = c.getString("rootDir", c.RootDir)
 	c.Version = c.getString("version", c.Version)
-	c.Addr = c.getString("addr", c.Addr)
+	c.Host = c.getString("host", c.Host)
+	c.Port = c.getInt("port", c.Port)
 	c.GRPCAddr = c.getString("grpcAddr", c.GRPCAddr)
 	c.SSLAddr = c.getString("sslAddr", c.SSLAddr)
 	c.MessageSaveAcrossDevice = c.getBool("messageSaveAcrossDevice", c.MessageSaveAcrossDevice)
@@ -492,7 +494,7 @@ func (c *Config) ConfigureWithViper(vp *viper.Viper) {
 	}
 
 	if strings.TrimSpace(c.External.BaseURL) == "" {
-		c.External.BaseURL = fmt.Sprintf("http://%s:8090", c.External.IP)
+		c.External.BaseURL = fmt.Sprintf("http://%s:%d", c.External.IP, c.Port)
 	}
 	if strings.TrimSpace(c.External.H5BaseURL) == "" {
 		c.External.H5BaseURL = fmt.Sprintf("%s/web", c.External.BaseURL)
