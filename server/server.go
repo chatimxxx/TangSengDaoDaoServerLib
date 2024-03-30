@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -32,7 +33,7 @@ func New(ctx *config.Context) *Server {
 	s := &Server{
 		ctx:      ctx,
 		r:        r,
-		addr:     ctx.GetConfig().Addr,
+		addr:     fmt.Sprintf("%s:%d", ctx.GetConfig().Host, ctx.GetConfig().Port),
 		sslAddr:  ctx.GetConfig().SSLAddr,
 		grpcAddr: ctx.GetConfig().GRPCAddr,
 	}
