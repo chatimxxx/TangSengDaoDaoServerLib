@@ -93,7 +93,6 @@ type Config struct {
 	}
 	// ---------- db相关配置 ----------
 	DB struct {
-		InitDb               bool          //是否需要初始化数据库
 		MySQLAddr            string        // mysql的连接信息
 		MySQLMaxOpenConns    int           // 最大连接数
 		MySQLMaxIdleConns    int           // 最大空闲连接数
@@ -278,7 +277,6 @@ func New() *Config {
 
 		// ---------- db配置 ----------
 		DB: struct {
-			InitDb               bool
 			MySQLAddr            string
 			MySQLMaxOpenConns    int
 			MySQLMaxIdleConns    int
@@ -288,12 +286,11 @@ func New() *Config {
 			RedisPass            string
 			AsynctaskRedisAddr   string
 		}{
-			InitDb:               false,
 			MySQLAddr:            "root:demo@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=true",
 			MySQLMaxOpenConns:    100,
 			MySQLMaxIdleConns:    10,
 			MySQLConnMaxLifetime: time.Second * 60 * 60 * 4, //mysql 默认超时时间为 60*60*8=28800 SetConnMaxLifetime设置为小于数据库超时时间即可
-			Migration:            true,
+			Migration:            false,
 			RedisAddr:            "127.0.0.1:6379",
 		},
 		// ---------- 分布式配置 ----------
