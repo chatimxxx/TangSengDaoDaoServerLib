@@ -1,4 +1,4 @@
-package wkrsa
+package xorsa
 
 import (
 	"fmt"

@@ -1,4 +1,4 @@
-package wkhttp
+package xohttp
 
 import (
 	"errors"
@@ -7,10 +7,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/cache"
-	"github.com/chatimxxx/TangSengDaoDaoServerLib/pkg/log"
 	"github.com/gin-gonic/gin"
 	"github.com/opentracing/opentracing-go"
+	"github.com/xochat/xochat_im_server_lib/pkg/cache"
+	"github.com/xochat/xochat_im_server_lib/pkg/log"
 	"go.uber.org/zap"
 )
 
@@ -24,15 +24,15 @@ const (
 	SuperAdmin UserRole = "superAdmin"
 )
 
-// WKHttp WKHttp
-type WKHttp struct {
+// XOHttp XOHttp
+type XOHttp struct {
 	r    *gin.Engine
 	pool sync.Pool
 }
 
 // New New
-func New() *WKHttp {
-	l := &WKHttp{
+func New() *XOHttp {
+	l := &XOHttp{
 		r:    gin.New(),
 		pool: sync.Pool{},
 	}
@@ -166,8 +166,8 @@ func (c *Context) CheckLoginRoleIsSuperAdmin() error {
 // HandlerFunc HandlerFunc
 type HandlerFunc func(c *Context)
 
-// WKHttpHandler WKHttpHandler
-func (l *WKHttp) WKHttpHandler(handlerFunc HandlerFunc) gin.HandlerFunc {
+// XOHttpHandler XOHttpHandler
+func (l *XOHttp) XOHttpHandler(handlerFunc HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		hc := l.pool.Get().(*Context)
 		hc.reset()
@@ -181,76 +181,76 @@ func (l *WKHttp) WKHttpHandler(handlerFunc HandlerFunc) gin.HandlerFunc {
 }
 
 // Run Run
-func (l *WKHttp) Run(addr ...string) error {
+func (l *XOHttp) Run(addr ...string) error {
 	return l.r.Run(addr...)
 }
 
-func (l *WKHttp) RunTLS(addr, certFile, keyFile string) error {
+func (l *XOHttp) RunTLS(addr, certFile, keyFile string) error {
 	return l.r.RunTLS(addr, certFile, keyFile)
 }
 
 // POST POST
-func (l *WKHttp) POST(relativePath string, handlers ...HandlerFunc) {
+func (l *XOHttp) POST(relativePath string, handlers ...HandlerFunc) {
 	l.r.POST(relativePath, l.handlersToGinHandleFuncs(handlers)...)
 }
 
 // GET GET
-func (l *WKHttp) GET(relativePath string, handlers ...HandlerFunc) {
+func (l *XOHttp) GET(relativePath string, handlers ...HandlerFunc) {
 	l.r.GET(relativePath, l.handlersToGinHandleFuncs(handlers)...)
 }
 
 // Any Any
-func (l *WKHttp) Any(relativePath string, handlers ...HandlerFunc) {
+func (l *XOHttp) Any(relativePath string, handlers ...HandlerFunc) {
 	l.r.Any(relativePath, l.handlersToGinHandleFuncs(handlers)...)
 }
 
 // Static Static
-func (l *WKHttp) Static(relativePath string, root string) {
+func (l *XOHttp) Static(relativePath string, root string) {
 	l.r.Static(relativePath, root)
 }
 
 // LoadHTMLGlob LoadHTMLGlob
-func (l *WKHttp) LoadHTMLGlob(pattern string) {
+func (l *XOHttp) LoadHTMLGlob(pattern string) {
 	l.r.LoadHTMLGlob(pattern)
 }
 
 // UseGin UseGin
-func (l *WKHttp) UseGin(handlers ...gin.HandlerFunc) {
+func (l *XOHttp) UseGin(handlers ...gin.HandlerFunc) {
 	l.r.Use(handlers...)
 }
 
 // Use Use
-func (l *WKHttp) Use(handlers ...HandlerFunc) {
+func (l *XOHttp) Use(handlers ...HandlerFunc) {
 	l.r.Use(l.handlersToGinHandleFuncs(handlers)...)
 }
 
 // ServeHTTP ServeHTTP
-func (l *WKHttp) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (l *XOHttp) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	l.r.ServeHTTP(w, req)
 }
 
 // Group Group
-func (l *WKHttp) Group(relativePath string, handlers ...HandlerFunc) *RouterGroup {
+func (l *XOHttp) Group(relativePath string, handlers ...HandlerFunc) *RouterGroup {
 	return newRouterGroup(l.r.Group(relativePath, l.handlersToGinHandleFuncs(handlers)...), l)
 }
 
 // HandleContext HandleContext
-func (l *WKHttp) HandleContext(c *Context) {
+func (l *XOHttp) HandleContext(c *Context) {
 	l.r.HandleContext(c.Context)
 }
 
-func (l *WKHttp) handlersToGinHandleFuncs(handlers []HandlerFunc) []gin.HandlerFunc {
+func (l *XOHttp) handlersToGinHandleFuncs(handlers []HandlerFunc) []gin.HandlerFunc {
 	newHandlers := make([]gin.HandlerFunc, 0, len(handlers))
 	if handlers != nil {
 		for _, handler := range handlers {
-			newHandlers = append(newHandlers, l.WKHttpHandler(handler))
+			newHandlers = append(newHandlers, l.XOHttpHandler(handler))
 		}
 	}
 	return newHandlers
 }
 
 // AuthMiddleware 认证中间件
-func (l *WKHttp) AuthMiddleware(cache cache.Cache, tokenPrefix string) HandlerFunc {
+func (l *XOHttp) AuthMiddleware(cache cache.Cache, tokenPrefix string) HandlerFunc {
 	return func(c *Context) {
 		token := c.GetHeader("token")
 		if token == "" {
@@ -294,10 +294,10 @@ func GetLoginUID(token string, tokenPrefix string, cache cache.Cache) string {
 // RouterGroup RouterGroup
 type RouterGroup struct {
 	*gin.RouterGroup
-	L *WKHttp
+	L *XOHttp
 }
 
-func newRouterGroup(g *gin.RouterGroup, l *WKHttp) *RouterGroup {
+func newRouterGroup(g *gin.RouterGroup, l *XOHttp) *RouterGroup {
 	return &RouterGroup{RouterGroup: g, L: l}
 }
 
