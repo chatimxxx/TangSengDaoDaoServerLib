@@ -57,6 +57,147 @@ func newTablePartitionConfig() TablePartitionConfig {
 	}
 }
 
+type Logger struct {
+	Dir     string // 日志存储目录
+	Level   zapcore.Level
+	LineNum bool // 是否显示代码行数
+}
+
+type External struct {
+	IP          string // 外网IP
+	BaseURL     string // 本服务的对外的基础地址
+	H5BaseURL   string // h5页面的基地址 如果没有配置默认未 BaseURL + /web
+	APIBaseURL  string // api的基地址 如果没有配置默认未 BaseURL + /v1
+	WebLoginURL string // web登录地址
+}
+
+type DB struct {
+	MySQLAddr            string        // mysql的连接信息
+	MySQLMaxOpenConns    int           // 最大连接数
+	MySQLMaxIdleConns    int           // 最大空闲连接数
+	MySQLConnMaxLifetime time.Duration // 连接最大生命周期
+	Migration            bool          // 是否合并数据库
+	RedisAddr            string        // redis地址
+	RedisPass            string        // redis密码
+	RedisDB              int           //
+	AsynctaskRedisAddr   string        // 异步任务的redis地址 不写默认为RedisAddr的地址
+}
+
+type Cache struct {
+	TokenCachePrefix            string        // token缓存前缀
+	LoginDeviceCachePrefix      string        // 登录设备缓存前缀
+	LoginDeviceCacheExpire      time.Duration // 登录设备缓存过期时间
+	UIDTokenCachePrefix         string        // uidtoken缓存前缀
+	FriendApplyTokenCachePrefix string        // 申请好友的token的前缀
+	RobotEventPrefix            string        //
+	FriendsKeyCachePrefix       string        // 好友key
+	UserDeviceTokenPrefix       string        // UserDeviceTokenPrefix 用户设备token缓存前缀
+	UserDeviceBadgePrefix       string        // UserDeviceBadgePrefix 用户设备红点
+	QRCodeCachePrefix           string        // QRCodeCachePrefix 二维码缓存前缀
+	AuthCodeCachePrefix         string        // AuthCodeCachePrefix 授权code
+	FriendApplyExpire           time.Duration // 好友申请过期时间
+	TokenExpire                 time.Duration // token失效时间
+	NameCacheExpire             time.Duration // 名字缓存过期时间
+}
+
+type Account struct {
+	SystemUID       string //系统账号uid
+	FileHelperUID   string // 文件助手uid
+	SystemGroupID   string //系统群ID 需求在app_config表里设置new_user_join_system_group为1才有效
+	SystemGroupName string // 系统群的名字
+	AdminUID        string //系统管理员账号
+}
+
+type WuKongIM struct {
+	APIURL       string // im基地址
+	ManagerToken string // im的管理者token wukongim配置了就需要填写，没配置就不需要
+}
+
+type Avatar struct {
+	Default        string // 默认头像
+	DefaultCount   int    // 默认头像数量
+	Partition      int    // 头像分区数量
+	DefaultBaseURL string // 默认头像的基地址
+}
+
+type ShortNo struct {
+	NumOn   bool // 是否开启数字短编号
+	NumLen  int  // 数字短编号长度
+	EditOff bool // 是否关闭短编号编辑
+}
+
+type Robot struct {
+	MessageExpire      time.Duration // 消息过期时间
+	InlineQueryTimeout time.Duration // inlineQuery事件过期时间
+	EventPoolSize      int64         // 机器人事件池大小
+}
+
+type Gitee struct {
+	OAuthURL     string // gitee oauth url
+	ClientID     string // gitee client id
+	ClientSecret string // gitee client secret
+}
+
+type Github struct {
+	OAuthURL     string // github oauth url
+	ClientID     string // github client id
+	ClientSecret string // github client secret
+}
+
+type OWT struct {
+	URL          string // owt api地址 例如： https://xx.xx.xx.xx:3000/v1
+	ServiceID    string // owt的服务ID
+	ServiceKey   string // owt的服务key （用户访问后台的api）
+	RoomMaxCount int    // 房间最大参与人数
+}
+
+type Register struct {
+	Off           bool // 是否关闭注册
+	OnlyChina     bool // 是否仅仅中国手机号可以注册
+	StickerAddOff bool // 是否关闭注册添加表情
+	UsernameOn    bool // 是否开启用户名注册
+}
+
+type Organization struct {
+	ImportOn bool // 是否开启导入组织信息
+}
+
+// ---------- push ----------
+type Push struct {
+	ContentDetailOn bool         //  推送是否显示正文详情(如果为false，则只显示“您有一条新的消息” 默认为true)
+	PushPoolSize    int64        // 推送任务池大小
+	APNS            APNSPush     // 苹果推送
+	MI              MIPush       // 小米推送
+	HMS             HMSPush      // 华为推送
+	VIVO            VIVOPush     // vivo推送
+	OPPO            OPPOPush     // oppo推送
+	FIREBASE        FIREBASEPush // FIREBASE推送
+}
+
+// ---------- message ----------
+type Message struct {
+	SendMessageOn bool // 是否开启接口发送发送消息
+}
+
+// ---------- wechat ----------
+type Wechat struct {
+	AppID     string // 微信appid 在开放平台内
+	AppSecret string
+}
+
+// ---------- tracing ----------
+type Tracing struct {
+	On   bool   // 是否开启tracing
+	Addr string // tracer的地址
+}
+
+// ---------- support ----------
+type Support struct {
+	Email     string // 技术支持的邮箱地址
+	EmailSmtp string // 技术支持的邮箱的smtp
+	EmailPwd  string // 邮箱密码
+}
+
 // Config 配置信息
 type Config struct {
 	vp *viper.Viper // 内部配置对象
@@ -79,54 +220,20 @@ type Config struct {
 	EventPoolSize               int64  // 事件任务池大小
 	AdminPwd                    string // 后台管理默认密码
 	// ---------- 外网配置 ----------
-	External struct {
-		IP          string // 外网IP
-		BaseURL     string // 本服务的对外的基础地址
-		H5BaseURL   string // h5页面的基地址 如果没有配置默认未 BaseURL + /web
-		APIBaseURL  string // api的基地址 如果没有配置默认未 BaseURL + /v1
-		WebLoginURL string // web登录地址
-	}
+	External External
 	// ---------- 日志配置 ----------
-	Logger struct {
-		Dir     string // 日志存储目录
-		Level   zapcore.Level
-		LineNum bool // 是否显示代码行数
-	}
+	Logger Logger
 	// ---------- db相关配置 ----------
-	DB struct {
-		MySQLAddr            string        // mysql的连接信息
-		MySQLMaxOpenConns    int           // 最大连接数
-		MySQLMaxIdleConns    int           // 最大空闲连接数
-		MySQLConnMaxLifetime time.Duration // 连接最大生命周期
-		Migration            bool          // 是否合并数据库
-		RedisAddr            string        // redis地址
-		RedisPass            string        // redis密码
-		AsynctaskRedisAddr   string        // 异步任务的redis地址 不写默认为RedisAddr的地址
-	}
+	DB DB
 	// ---------- 分布式配置 ----------
 	Cluster struct {
 		NodeID int //  节点ID 节点ID需要小于1024
 	}
 
 	// ---------- 缓存配置 ----------
-	Cache struct {
-		TokenCachePrefix            string        // token缓存前缀
-		LoginDeviceCachePrefix      string        // 登录设备缓存前缀
-		LoginDeviceCacheExpire      time.Duration // 登录设备缓存过期时间
-		UIDTokenCachePrefix         string        // uidtoken缓存前缀
-		FriendApplyTokenCachePrefix string        // 申请好友的token的前缀
-		FriendApplyExpire           time.Duration // 好友申请过期时间
-		TokenExpire                 time.Duration // token失效时间
-		NameCacheExpire             time.Duration // 名字缓存过期时间
-	}
+	Cache Cache
 	// ---------- 系统账户设置 ----------
-	Account struct {
-		SystemUID       string //系统账号uid
-		FileHelperUID   string // 文件助手uid
-		SystemGroupID   string //系统群ID 需求在app_config表里设置new_user_join_system_group为1才有效
-		SystemGroupName string // 系统群的名字
-		AdminUID        string //系统管理员账号
-	}
+	Account Account
 
 	// ---------- 文件服务 ----------
 
@@ -143,94 +250,36 @@ type Config struct {
 	AliyunInternationalSMS AliyunInternationalSMSConfig // 阿里云国际短信
 
 	// ---------- 悟空IM ----------
-	WuKongIM struct {
-		APIURL       string // im基地址
-		ManagerToken string // im的管理者token wukongim配置了就需要填写，没配置就不需要
-	}
+	WuKongIM WuKongIM
 	// ---------- 头像 ----------
-	Avatar struct {
-		Default        string // 默认头像
-		DefaultCount   int    // 默认头像数量
-		Partition      int    // 头像分区数量
-		DefaultBaseURL string // 默认头像的基地址
-	}
+	Avatar Avatar
 	// ---------- 短编号 ----------
-	ShortNo struct {
-		NumOn   bool // 是否开启数字短编号
-		NumLen  int  // 数字短编号长度
-		EditOff bool // 是否关闭短编号编辑
-	}
+	ShortNo ShortNo
 	// ---------- robot ----------
-	Robot struct {
-		MessageExpire      time.Duration // 消息过期时间
-		InlineQueryTimeout time.Duration // inlineQuery事件过期时间
-		EventPoolSize      int64         // 机器人事件池大小
-	}
+	Robot Robot
 
 	// ---------- gitee ----------
-	Gitee struct {
-		OAuthURL     string // gitee oauth url
-		ClientID     string // gitee client id
-		ClientSecret string // gitee client secret
-	}
+	Gitee Gitee
 	// ---------- github ----------
-	Github struct {
-		OAuthURL     string // github oauth url
-		ClientID     string // github client id
-		ClientSecret string // github client secret
-	}
+	Github Github
 	// ---------- owt ----------
-	OWT struct {
-		URL          string // owt api地址 例如： https://xx.xx.xx.xx:3000/v1
-		ServiceID    string // owt的服务ID
-		ServiceKey   string // owt的服务key （用户访问后台的api）
-		RoomMaxCount int    // 房间最大参与人数
-	}
-	Register struct {
-		Off           bool // 是否关闭注册
-		OnlyChina     bool // 是否仅仅中国手机号可以注册
-		StickerAddOff bool // 是否关闭注册添加表情
-		UsernameOn    bool // 是否开启用户名注册
-	}
-	Organization struct {
-		ImportOn bool // 是否开启导入组织信息
-	}
+	OWT          OWT
+	Register     Register
+	Organization Organization
 	// ---------- push ----------
-	Push struct {
-		ContentDetailOn bool         //  推送是否显示正文详情(如果为false，则只显示“您有一条新的消息” 默认为true)
-		PushPoolSize    int64        // 推送任务池大小
-		APNS            APNSPush     // 苹果推送
-		MI              MIPush       // 小米推送
-		HMS             HMSPush      // 华为推送
-		VIVO            VIVOPush     // vivo推送
-		OPPO            OPPOPush     // oppo推送
-		FIREBASE        FIREBASEPush // FIREBASE推送
-	}
+	Push Push
 	// ---------- message ----------
-	Message struct {
-		SendMessageOn bool // 是否开启接口发送发送消息
-	}
+	Message Message
 	// ---------- wechat ----------
-	Wechat struct {
-		AppID     string // 微信appid 在开放平台内
-		AppSecret string
-	}
+	Wechat Wechat
 
 	// ---------- tracing ----------
-	Tracing struct {
-		On   bool   // 是否开启tracing
-		Addr string // tracer的地址
-	}
+	Tracing Tracing
 
 	// ---------- support ----------
-	Support struct {
-		Email     string // 技术支持的邮箱地址
-		EmailSmtp string // 技术支持的邮箱的smtp
-		EmailPwd  string // 邮箱密码
-	}
+	Support Support
 
 	// ---------- 其他 ----------
-
 	Test bool // 是否是测试模式
 
 	QRCodeInfoURL    string   // 获取二维码信息的URL
@@ -265,34 +314,20 @@ func New() *Config {
 		RootDir:                     "tsdddata",
 		AdminPwd:                    "",
 		// ---------- 外网配置 ----------
-		External: struct {
-			IP          string
-			BaseURL     string
-			H5BaseURL   string
-			APIBaseURL  string
-			WebLoginURL string
-		}{
+		External: External{
 			BaseURL:     "",
 			WebLoginURL: "",
 		},
 
 		// ---------- db配置 ----------
-		DB: struct {
-			MySQLAddr            string
-			MySQLMaxOpenConns    int
-			MySQLMaxIdleConns    int
-			MySQLConnMaxLifetime time.Duration
-			Migration            bool
-			RedisAddr            string
-			RedisPass            string
-			AsynctaskRedisAddr   string
-		}{
+		DB: DB{
 			MySQLAddr:            "root:demo@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=true",
 			MySQLMaxOpenConns:    100,
 			MySQLMaxIdleConns:    10,
 			MySQLConnMaxLifetime: time.Second * 60 * 60 * 4, //mysql 默认超时时间为 60*60*8=28800 SetConnMaxLifetime设置为小于数据库超时时间即可
 			Migration:            false,
 			RedisAddr:            "127.0.0.1:6379",
+			RedisDB:              0,
 		},
 		// ---------- 分布式配置 ----------
 		Cluster: struct {
@@ -301,34 +336,25 @@ func New() *Config {
 			NodeID: 1,
 		},
 		// ---------- 缓存配置 ----------
-		Cache: struct {
-			TokenCachePrefix            string
-			LoginDeviceCachePrefix      string
-			LoginDeviceCacheExpire      time.Duration
-			UIDTokenCachePrefix         string
-			FriendApplyTokenCachePrefix string
-			FriendApplyExpire           time.Duration
-			TokenExpire                 time.Duration
-			NameCacheExpire             time.Duration
-		}{
-			TokenCachePrefix:            "token:",
+		Cache: Cache{
+			TokenCachePrefix:            "xochat:token:",
 			TokenExpire:                 time.Hour * 24 * 30,
-			LoginDeviceCachePrefix:      "login_device:",
+			LoginDeviceCachePrefix:      "xochat:login_device:",
 			LoginDeviceCacheExpire:      time.Minute * 5,
-			UIDTokenCachePrefix:         "uidtoken:",
-			FriendApplyTokenCachePrefix: "friend_token:",
+			UIDTokenCachePrefix:         "xochat:uidtoken:",
+			RobotEventPrefix:            "xochat:robotEvent:",
+			FriendApplyTokenCachePrefix: "xochat:friend_token:",
+			FriendsKeyCachePrefix:       "xochat:lm-friends:",
+			UserDeviceTokenPrefix:       "xochat:userDeviceToken:", // UserDeviceTokenPrefix 用户设备token缓存前缀
+			UserDeviceBadgePrefix:       "xochat:userDeviceBadge",  // UserDeviceBadgePrefix 用户设备红点
+			QRCodeCachePrefix:           "xochat:qrcode:",          // QRCodeCachePrefix 二维码缓存前缀
+			AuthCodeCachePrefix:         "xochat:authcode:",        // AuthCodeCachePrefix 授权code
 			FriendApplyExpire:           time.Hour * 24 * 15,
 			NameCacheExpire:             time.Hour * 24 * 7,
 		},
 
 		// ---------- 系统账户设置 ----------
-		Account: struct {
-			SystemUID       string
-			FileHelperUID   string
-			SystemGroupID   string
-			SystemGroupName string
-			AdminUID        string
-		}{
+		Account: Account{
 			SystemUID:       "u_10000",
 			SystemGroupID:   "g_10000",
 			SystemGroupName: "意见反馈群",
@@ -342,20 +368,12 @@ func New() *Config {
 		SMSProvider: SMSProviderAliyun,
 
 		// ---------- wukongim ----------
-		WuKongIM: struct {
-			APIURL       string
-			ManagerToken string
-		}{
+		WuKongIM: WuKongIM{
 			APIURL: "http://127.0.0.1:5001",
 		},
 
 		// ---------- avatar ----------
-		Avatar: struct {
-			Default        string
-			DefaultCount   int
-			Partition      int
-			DefaultBaseURL string
-		}{
+		Avatar: Avatar{
 			// Default:        "assets/assets/avatar.png",
 			Default:        "",
 			DefaultCount:   900,
@@ -364,62 +382,32 @@ func New() *Config {
 		},
 
 		// ---------- 短号配置 ----------
-		ShortNo: struct {
-			NumOn   bool
-			NumLen  int
-			EditOff bool
-		}{
+		ShortNo: ShortNo{
 			NumOn:   false,
 			NumLen:  7,
 			EditOff: false,
 		},
 
 		// ---------- 机器人 ----------
-		Robot: struct {
-			MessageExpire      time.Duration
-			InlineQueryTimeout time.Duration
-			EventPoolSize      int64
-		}{
+		Robot: Robot{
 			MessageExpire:      time.Hour * 24 * 7,
 			InlineQueryTimeout: time.Second * 10,
 			EventPoolSize:      100,
 		},
 		// ---------- gitee ----------
-		Gitee: struct {
-			OAuthURL     string
-			ClientID     string
-			ClientSecret string
-		}{
+		Gitee: Gitee{
 			OAuthURL: "https://gitee.com/oauth/authorize",
 		},
 		// ---------- github ----------
-		Github: struct {
-			OAuthURL     string
-			ClientID     string
-			ClientSecret string
-		}{
+		Github: Github{
 			OAuthURL: "https://github.com/login/oauth/authorize",
 		},
 		// ---------- rtc owt  ----------
-		OWT: struct {
-			URL          string
-			ServiceID    string
-			ServiceKey   string
-			RoomMaxCount int
-		}{
+		OWT: OWT{
 			RoomMaxCount: 9,
 		},
 		// ---------- push  ----------
-		Push: struct {
-			ContentDetailOn bool
-			PushPoolSize    int64
-			APNS            APNSPush
-			MI              MIPush
-			HMS             HMSPush
-			VIVO            VIVOPush
-			OPPO            OPPOPush
-			FIREBASE        FIREBASEPush
-		}{
+		Push: Push{
 			ContentDetailOn: true,
 			PushPoolSize:    100,
 			APNS: APNSPush{
@@ -430,11 +418,7 @@ func New() *Config {
 		},
 
 		// ---------- support  ----------
-		Support: struct {
-			Email     string
-			EmailSmtp string
-			EmailPwd  string
-		}{
+		Support: Support{
 			Email:     "",
 			EmailSmtp: "smtp.exmail.qq.com:25",
 			EmailPwd:  "",
@@ -512,6 +496,7 @@ func (c *Config) ConfigureWithViper(vp *viper.Viper) {
 	c.DB.Migration = c.getBool("db.migration", c.DB.Migration)
 	c.DB.RedisAddr = c.getString("db.redisAddr", c.DB.RedisAddr)
 	c.DB.RedisPass = c.getString("db.redisPass", c.DB.RedisPass)
+	c.DB.RedisDB = c.getInt("db.redisDB", c.DB.RedisDB)
 	c.DB.AsynctaskRedisAddr = c.getString("db.asynctaskRedisAddr", c.DB.AsynctaskRedisAddr)
 
 	//#################### cluster ####################
@@ -523,6 +508,8 @@ func (c *Config) ConfigureWithViper(vp *viper.Viper) {
 	c.Cache.LoginDeviceCacheExpire = c.getDuration("cache.loginDeviceCacheExpire", c.Cache.LoginDeviceCacheExpire)
 	c.Cache.UIDTokenCachePrefix = c.getString("cache.uidTokenCachePrefix", c.Cache.UIDTokenCachePrefix)
 	c.Cache.FriendApplyTokenCachePrefix = c.getString("cache.friendApplyTokenCachePrefix", c.Cache.FriendApplyTokenCachePrefix)
+	c.Cache.RobotEventPrefix = c.getString("cache.robotEventPrefix", c.Cache.RobotEventPrefix)
+	c.Cache.FriendsKeyCachePrefix = c.getString("cache.friendsKeyCachePrefix", c.Cache.FriendsKeyCachePrefix)
 	c.Cache.FriendApplyExpire = c.getDuration("cache.friendApplyExpire", c.Cache.FriendApplyExpire)
 	c.Cache.TokenExpire = c.getDuration("cache.tokenExpire", c.Cache.TokenExpire)
 	c.Cache.NameCacheExpire = c.getDuration("cache.nameCacheExpire", c.Cache.NameCacheExpire)

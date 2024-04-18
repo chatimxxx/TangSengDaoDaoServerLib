@@ -13,9 +13,9 @@ type RedisCache struct {
 }
 
 // NewRedisCache 创建
-func NewRedisCache(addr string, password string) *RedisCache {
+func NewRedisCache(addr string, password string, db int) *RedisCache {
 	r := &RedisCache{}
-	r.conn = redis.New(addr, password)
+	r.conn = redis.New(addr, password, db)
 	return r
 }
 
