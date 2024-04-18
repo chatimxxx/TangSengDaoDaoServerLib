@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"runtime"
 	"time"
 
 	"go.uber.org/zap"
@@ -17,6 +18,12 @@ var warnLogger *zap.Logger
 var testLogger *zap.Logger
 var atom = zap.NewAtomicLevel()
 
+func encodeCaller(_ zapcore.EntryCaller, enc zapcore.PrimitiveArrayEncoder) {
+	// 在这里自定义调用者信息的输出格式
+	_, filename, line, _ := runtime.Caller(6)
+	caller := fmt.Sprintf("%s:%d", filename, line)
+	enc.AppendString(caller)
+}
 func Configure(opts *Options) {
 	atom.SetLevel(opts.Level)
 	core := zapcore.NewCore(
@@ -94,7 +101,7 @@ func newEncoderConfig() zapcore.EncoderConfig {
 		StacktraceKey: "stacktrace",
 		LineEnding:    zapcore.DefaultLineEnding,
 		EncodeLevel:   zapcore.LowercaseLevelEncoder, // 小写编码器
-		EncodeCaller:  zapcore.FullCallerEncoder,     // 全路径编码器
+		EncodeCaller:  encodeCaller,                  // 全路径编码器
 		EncodeName:    zapcore.FullNameEncoder,
 		EncodeTime: func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 			enc.AppendString(t.Format("2006-01-02 15:04:05"))
