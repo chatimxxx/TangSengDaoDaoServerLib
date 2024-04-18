@@ -266,7 +266,7 @@ func (l *XOHttp) AuthMiddleware(cache cache.Cache, tokenPrefix string, log log.L
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"msg": "请先登录！",
 			})
-			log.Error(fmt.Sprintf("账号 %s 未登录", uidAndName))
+			log.Error(fmt.Sprintf("账号 %s 未登录; token=%s", uidAndName, token))
 			return
 		}
 		uidAndNames := strings.Split(uidAndName, "@")
@@ -274,7 +274,7 @@ func (l *XOHttp) AuthMiddleware(cache cache.Cache, tokenPrefix string, log log.L
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"msg": "token有误！",
 			})
-			log.Error(fmt.Sprintf("token 错误 %s", uidAndName))
+			log.Error(fmt.Sprintf("token 错误 %s; token=%s", uidAndName, token))
 			return
 		}
 		c.Set("uid", uidAndNames[0])
