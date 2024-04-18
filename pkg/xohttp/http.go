@@ -2,6 +2,7 @@ package xohttp
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -250,13 +251,14 @@ func (l *XOHttp) handlersToGinHandleFuncs(handlers []HandlerFunc) []gin.HandlerF
 }
 
 // AuthMiddleware 认证中间件
-func (l *XOHttp) AuthMiddleware(cache cache.Cache, tokenPrefix string) HandlerFunc {
+func (l *XOHttp) AuthMiddleware(cache cache.Cache, tokenPrefix string, log log.Log) HandlerFunc {
 	return func(c *Context) {
 		token := c.GetHeader("token")
 		if token == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"msg": "token不能为空，请先登录！",
 			})
+			log.Error("token 为空")
 			return
 		}
 		uidAndName := GetLoginUID(token, tokenPrefix, cache)
@@ -264,6 +266,7 @@ func (l *XOHttp) AuthMiddleware(cache cache.Cache, tokenPrefix string) HandlerFu
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"msg": "请先登录！",
 			})
+			log.Error(fmt.Sprintf("账号 %s 未登录", uidAndName))
 			return
 		}
 		uidAndNames := strings.Split(uidAndName, "@")
@@ -271,6 +274,7 @@ func (l *XOHttp) AuthMiddleware(cache cache.Cache, tokenPrefix string) HandlerFu
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"msg": "token有误！",
 			})
+			log.Error(fmt.Sprintf("token 错误 %s", uidAndName))
 			return
 		}
 		c.Set("uid", uidAndNames[0])

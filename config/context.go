@@ -119,8 +119,7 @@ func (c *Context) Cache() cache.Cache {
 
 // 认证中间件
 func (c *Context) AuthMiddleware(r *xohttp.XOHttp) xohttp.HandlerFunc {
-
-	return r.AuthMiddleware(c.Cache(), c.cfg.Cache.TokenCachePrefix)
+	return r.AuthMiddleware(c.Cache(), c.cfg.Cache.TokenCachePrefix, c.Log)
 }
 
 // GetRedisConn GetRedisConn
