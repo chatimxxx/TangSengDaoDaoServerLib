@@ -95,6 +95,7 @@ type Cache struct {
 	UserDeviceBadgePrefix       string        // UserDeviceBadgePrefix 用户设备红点
 	QRCodeCachePrefix           string        // QRCodeCachePrefix 二维码缓存前缀
 	AuthCodeCachePrefix         string        // AuthCodeCachePrefix 授权code
+	MessageExtraVersionPrefix   string        //
 	FriendApplyExpire           time.Duration // 好友申请过期时间
 	TokenExpire                 time.Duration // token失效时间
 	NameCacheExpire             time.Duration // 名字缓存过期时间
@@ -345,10 +346,11 @@ func New() *Config {
 			RobotEventPrefix:            "xochat:robotEvent:",
 			FriendApplyTokenCachePrefix: "xochat:friend_token:",
 			FriendsKeyCachePrefix:       "xochat:lm-friends:",
-			UserDeviceTokenPrefix:       "xochat:userDeviceToken:", // UserDeviceTokenPrefix 用户设备token缓存前缀
-			UserDeviceBadgePrefix:       "xochat:userDeviceBadge",  // UserDeviceBadgePrefix 用户设备红点
-			QRCodeCachePrefix:           "xochat:qrcode:",          // QRCodeCachePrefix 二维码缓存前缀
-			AuthCodeCachePrefix:         "xochat:authcode:",        // AuthCodeCachePrefix 授权code
+			UserDeviceTokenPrefix:       "xochat:userDeviceToken:",     // UserDeviceTokenPrefix 用户设备token缓存前缀
+			UserDeviceBadgePrefix:       "xochat:userDeviceBadge",      // UserDeviceBadgePrefix 用户设备红点
+			QRCodeCachePrefix:           "xochat:qrcode:",              // QRCodeCachePrefix 二维码缓存前缀
+			AuthCodeCachePrefix:         "xochat:authcode:",            // AuthCodeCachePrefix 授权code
+			MessageExtraVersionPrefix:   "xochat:messageExtraVersion:", //
 			FriendApplyExpire:           time.Hour * 24 * 15,
 			NameCacheExpire:             time.Hour * 24 * 7,
 		},
@@ -510,6 +512,11 @@ func (c *Config) ConfigureWithViper(vp *viper.Viper) {
 	c.Cache.FriendApplyTokenCachePrefix = c.getString("cache.friendApplyTokenCachePrefix", c.Cache.FriendApplyTokenCachePrefix)
 	c.Cache.RobotEventPrefix = c.getString("cache.robotEventPrefix", c.Cache.RobotEventPrefix)
 	c.Cache.FriendsKeyCachePrefix = c.getString("cache.friendsKeyCachePrefix", c.Cache.FriendsKeyCachePrefix)
+	c.Cache.UserDeviceTokenPrefix = c.getString("cache.userDeviceTokenPrefix", c.Cache.UserDeviceTokenPrefix)             // UserDeviceTokenPrefix 用户设备token缓存前缀
+	c.Cache.UserDeviceBadgePrefix = c.getString("cache.userDeviceBadgePrefix", c.Cache.UserDeviceBadgePrefix)             // UserDeviceBadgePrefix 用户设备红点
+	c.Cache.QRCodeCachePrefix = c.getString("cache.qrcodePrefix", c.Cache.QRCodeCachePrefix)                              // QRCodeCachePrefix 二维码缓存前缀
+	c.Cache.AuthCodeCachePrefix = c.getString("cache.authcodePrefix", c.Cache.AuthCodeCachePrefix)                        // AuthCodeCachePrefix 授权code
+	c.Cache.MessageExtraVersionPrefix = c.getString("cache.messageExtraVersionPrefix", c.Cache.MessageExtraVersionPrefix) //
 	c.Cache.FriendApplyExpire = c.getDuration("cache.friendApplyExpire", c.Cache.FriendApplyExpire)
 	c.Cache.TokenExpire = c.getDuration("cache.tokenExpire", c.Cache.TokenExpire)
 	c.Cache.NameCacheExpire = c.getDuration("cache.nameCacheExpire", c.Cache.NameCacheExpire)

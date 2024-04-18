@@ -165,18 +165,6 @@ const (
 	CMDJoinOrganization = "joinOrganization"
 )
 
-//// UserDeviceTokenPrefix 用户设备token缓存前缀
-//const UserDeviceTokenPrefix = "userDeviceToken:"
-//
-//// UserDeviceBadgePrefix 用户设备红点
-//const UserDeviceBadgePrefix = "userDeviceBadge"
-//
-//// QRCodeCachePrefix 二维码缓存前缀
-//const QRCodeCachePrefix = "qrcode:"
-//
-//// AuthCodeCachePrefix 授权code
-//const AuthCodeCachePrefix = "authcode:"
-
 // AuthCodeType 认证代码类型
 type AuthCodeType string
 
