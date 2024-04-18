@@ -18,12 +18,6 @@ var warnLogger *zap.Logger
 var testLogger *zap.Logger
 var atom = zap.NewAtomicLevel()
 
-func encodeCaller(_ zapcore.EntryCaller, enc zapcore.PrimitiveArrayEncoder) {
-	// 在这里自定义调用者信息的输出格式
-	_, filename, line, _ := runtime.Caller(6)
-	caller := fmt.Sprintf("%s:%d", filename, line)
-	enc.AppendString(caller)
-}
 func Configure(opts *Options) {
 	atom.SetLevel(opts.Level)
 	core := zapcore.NewCore(
@@ -88,6 +82,13 @@ func Configure(opts *Options) {
 		warnLogger = zap.New(core)
 	}
 
+}
+
+func encodeCaller(_ zapcore.EntryCaller, enc zapcore.PrimitiveArrayEncoder) {
+	// 在这里自定义调用者信息的输出格式
+	_, filename, line, _ := runtime.Caller(6)
+	caller := fmt.Sprintf("%s:%d", filename, line)
+	enc.AppendString(caller)
 }
 
 func newEncoderConfig() zapcore.EncoderConfig {
