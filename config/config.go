@@ -173,6 +173,7 @@ type Push struct {
 	VIVO            VIVOPush     // vivo推送
 	OPPO            OPPOPush     // oppo推送
 	FIREBASE        FIREBASEPush // FIREBASE推送
+	JPush           JPushConfig  // 极光推送
 }
 
 // ---------- message ----------
@@ -976,6 +977,9 @@ type FIREBASEPush struct {
 	PackageName string
 	JsonPath    string // firebase推送需要的json的路径
 	ProjectId   string // serviceAccountJson中的project_id值
+}
+
+type JPushConfig struct {
 }
 
 type duration struct {
