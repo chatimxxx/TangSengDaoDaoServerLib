@@ -27,9 +27,10 @@ type ChannelResp struct {
 	Mute     int `json:"mute"`      // 是否免打扰
 	ShowNick int `json:"show_nick"` // 是否显示昵称
 	// 个人特有
-	Follow      int `json:"follow"`       // 是否已关注 0.未关注（陌生人） 1.已关注（好友）
-	BeDeleted   int `json:"be_deleted"`   // 是否被对方删除
-	BeBlacklist int `json:"be_blacklist"` // 是否被对方拉入黑名单
+	Follow      int    `json:"follow"`       // 是否已关注 0.未关注（陌生人） 1.已关注（好友）
+	BeDeleted   int    `json:"be_deleted"`   // 是否被对方删除
+	BeBlacklist int    `json:"be_blacklist"` // 是否被对方拉入黑名单
+	Profile     string `json:"profile"`      // 个性签名
 	// 群特有
 	Notice    string `json:"notice"`    // 群公告
 	Save      int    `json:"save"`      // 群是否保存
