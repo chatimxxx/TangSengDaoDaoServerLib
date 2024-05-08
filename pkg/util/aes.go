@@ -121,3 +121,63 @@ func PKCS7UnPadding(origData []byte) []byte {
 	return origData[:(length - unpadding)]
 
 }
+
+func Encrypt(plainText, key []byte, iv []byte) (string, error) {
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return "", err
+	}
+
+	// 使用PKCS7填充方式
+	paddedPlainText := pkcs7Padding(plainText, block.BlockSize())
+
+	cipherText := make([]byte, len(paddedPlainText))
+	if iv == nil {
+		iv = make([]byte, block.BlockSize())
+	}
+	mode := cipher.NewCBCEncrypter(block, iv)
+	mode.CryptBlocks(cipherText, paddedPlainText)
+	bs := base64.StdEncoding.EncodeToString(cipherText)
+	return base64.StdEncoding.EncodeToString([]byte(bs)), nil
+}
+
+func Decrypt(cipherText string, key []byte, iv []byte) ([]byte, error) {
+	decodeString, err := base64.StdEncoding.DecodeString(cipherText)
+	if err != nil {
+		return nil, err
+	}
+	cipherBytes, err := base64.StdEncoding.DecodeString(string(decodeString))
+	if err != nil {
+		return nil, err
+	}
+
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+
+	if iv == nil {
+		iv = make([]byte, block.BlockSize())
+	}
+	decryptedText := make([]byte, len(cipherBytes))
+
+	mode := cipher.NewCBCDecrypter(block, iv)
+	mode.CryptBlocks(decryptedText, cipherBytes)
+
+	// 去除PKCS7填充
+	unPaddedText := pkcs7UnPadding(decryptedText)
+
+	return unPaddedText, nil
+}
+
+func pkcs7Padding(data []byte, blockSize int) []byte {
+	padding := blockSize - (len(data) % blockSize)
+	paddedData := append(data, bytes.Repeat([]byte{byte(padding)}, padding)...)
+	return paddedData
+}
+
+func pkcs7UnPadding(data []byte) []byte {
+	padding := int(data[len(data)-1])
+	unPaddedData := data[:len(data)-padding]
+	return unPaddedData
+}

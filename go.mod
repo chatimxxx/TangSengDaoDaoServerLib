@@ -1,6 +1,6 @@
 module github.com/xochat/xochat_im_server_lib
 
-go 1.20
+go 1.22
 
 require (
 	github.com/RichardKnop/machinery/v2 v2.0.10
