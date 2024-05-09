@@ -177,6 +177,9 @@ func pkcs7Padding(data []byte, blockSize int) []byte {
 }
 
 func pkcs7UnPadding(data []byte) []byte {
+	if len(data) < 1 {
+		return nil
+	}
 	padding := int(data[len(data)-1])
 	unPaddedData := data[:len(data)-padding]
 	return unPaddedData
