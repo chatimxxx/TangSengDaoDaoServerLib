@@ -12,4 +12,8 @@ type Cache interface {
 	SetAndExpire(key string, value string, expire time.Duration) error
 	// 获取key对应的值
 	Get(key string) (string, error)
+	//
+	HGet(key string, field string) (string, error)
+	//
+	HGetAll(key string) (map[string]string, error)
 }

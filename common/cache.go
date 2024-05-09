@@ -39,6 +39,14 @@ func (r *RedisCache) Get(key string) (string, error) {
 	return r.conn.GetString(key)
 }
 
+func (r *RedisCache) HGet(key string, field string) (string, error) {
+	return r.conn.Hget(key, field)
+}
+
+func (r *RedisCache) HGetAll(key string) (map[string]string, error) {
+	return r.conn.Hgetall(key)
+}
+
 // GetRedisConn 获取redis连接
 func (r *RedisCache) GetRedisConn() *redis.Conn {
 	return r.conn
