@@ -58,6 +58,16 @@ type MemoryCache struct {
 	sync.RWMutex
 }
 
+func (m *MemoryCache) HGet(key string, field string) (string, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m *MemoryCache) HGetAll(key string) (map[string]string, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 // NewMemoryCache 创建
 func NewMemoryCache() *MemoryCache {
 	return &MemoryCache{
