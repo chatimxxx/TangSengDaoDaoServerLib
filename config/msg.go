@@ -625,6 +625,38 @@ type OnlinestatusResp struct {
 	Online      int    `json:"online"`       // 是否在线
 }
 
+// IMSSystemUidsAdd 添加系统账号
+func (c *Context) IMSSystemUidsAdd(uids []string) error {
+	if c.cfg.Test {
+		c.Info("获取指定用户的在线状态", zap.String("req", util.ToJson(uids)))
+		return nil
+	}
+	resp, err := network.Post(c.cfg.WuKongIM.APIURL+"/user/systemuids_add", []byte(util.ToJson(uids)), nil)
+	if err != nil {
+		return err
+	}
+	if err := c.handlerIMError(resp); err != nil {
+		return err
+	}
+	return nil
+}
+
+// IMSSystemUidsAdd 添加系统账号
+func (c *Context) IMSSystemUidsRemove(uids []string) error {
+	if c.cfg.Test {
+		c.Info("获取指定用户的在线状态", zap.String("req", util.ToJson(uids)))
+		return nil
+	}
+	resp, err := network.Post(c.cfg.WuKongIM.APIURL+"/user/systemuids_remove", []byte(util.ToJson(uids)), nil)
+	if err != nil {
+		return err
+	}
+	if err := c.handlerIMError(resp); err != nil {
+		return err
+	}
+	return nil
+}
+
 // MessageDeleteReq 删除消息请求
 type MessageDeleteReq struct {
 	UID         string   `json:"uid"`          // 频道ID
