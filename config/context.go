@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -76,6 +77,7 @@ func (c *Context) GetConfig() *Config {
 // NewMySQL 创建mysql数据库实例
 func (c *Context) NewMySQL() *dbr.Session {
 	if c.mySQLSession == nil {
+		c.Log.Info(fmt.Sprintf("数据库链接地址   %s", c.cfg.DB.MySQLAddr))
 		c.mySQLSession = db.NewMySQL(c.cfg.DB.MySQLAddr, c.cfg.DB.MySQLMaxOpenConns, c.cfg.DB.MySQLMaxIdleConns, c.cfg.DB.MySQLConnMaxLifetime)
 	}
 	return c.mySQLSession
